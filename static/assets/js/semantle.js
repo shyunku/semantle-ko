@@ -17,7 +17,6 @@ let model = null;
 let numPuzzles = 4650;
 const now = Date.now();
 const initialDate = new Date("2022-04-01T00:00:00+09:00");
-let puzzleNumber = -1;
 const yesterdayPuzzleNumber = (puzzleNumber + numPuzzles - 1) % numPuzzles;
 const storage = window.localStorage;
 let chrono_forward = 1;
