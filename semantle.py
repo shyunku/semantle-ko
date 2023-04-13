@@ -20,7 +20,7 @@ KST = timezone('Asia/Seoul')
 NUM_SECRETS = 4650
 scheduler = BackgroundScheduler()
 scheduler.start()
-current_round = 0;
+current_round = 10;
 calculating = False
 
 def write_last():
