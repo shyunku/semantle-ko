@@ -35,7 +35,8 @@ def read_last():
         with open('last.dat', 'rb') as f:
             current_round = pickle.load(f)
     except FileNotFoundError:
-        current_round = 0
+        print("last.dat not found, starting from ~")
+        # current_round = 0
 
 # read
 read_last()
