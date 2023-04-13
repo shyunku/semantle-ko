@@ -141,7 +141,7 @@ def get_solution_yesterday(round: int):
     return app.secrets[(round - 1) % NUM_SECRETS]
 
 @app.route('/answer-secured')
-def get_solution_yesterday():
+def get_solution():
     return app.secrets[current_round % NUM_SECRETS]
 
 
