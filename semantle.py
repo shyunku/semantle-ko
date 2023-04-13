@@ -42,6 +42,7 @@ for offset in range(-2, 2):
 # @scheduler.scheduled_job(trigger=CronTrigger(hour=1, minute=0, timezone=KST))
 def update_nearest():
     print("scheduled stuff triggered!")
+    global current_round
     current_round += 1;
     next_puzzle = current_round % NUM_SECRETS
     next_word = secrets[next_puzzle]
