@@ -27,14 +27,12 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y0ED7GGKGN"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag('js', new Date());
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-      gtag('config', 'G-Y0ED7GGKGN');
-
-      // use django template variable to set puzzle number
-      puzzleNumber = {{ round }};
-      console.log(puzzleNumber);
+      gtag("config", "G-Y0ED7GGKGN");
     </script>
 
     <!--
@@ -51,6 +49,10 @@
   <body>
     <!-- include script here so that we can set dark mode of body on initialization -->
     <script src="https://app.embed.im/snow.js" defer></script>
+    <script>
+      puzzleNumber = {{ round }};
+      console.log(puzzleNumber);
+    </script>
     <script src="/assets/js/semantle.js?v=20230228"></script>
     <a class="banner" href="https://newsjel.ly/?utm_source=semantle_ko&utm_medium=top_banner" target="_blank">
       <img src="/assets/icon.svg" alt="뉴스젤리 로고" />
