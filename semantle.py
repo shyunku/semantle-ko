@@ -22,6 +22,7 @@ scheduler = BackgroundScheduler()
 scheduler.start()
 current_round = 10;
 calculating = False
+tries = 0
 
 def write_last():
     with open('last.dat', 'wb') as f:
@@ -63,10 +64,14 @@ def update_nearest():
     print("scheduled stuff triggered!")
     global current_round
     global calculating
+    global tries
     if calculating:
         return
+    
     calculating = True
     current_round += 1;
+    tries = 0
+
     write_last()
     next_puzzle = current_round % NUM_SECRETS
     next_word = secrets[next_puzzle]
@@ -103,6 +108,8 @@ def send_static(path):
 @app.route('/guess/<int:round>/<string:word>')
 def get_guess(round: int, word: str):
     # print(app.secrets[round])
+    global tries
+    tries += 1
     if app.secrets[round].lower() == word.lower():
         word = app.secrets[round]
         # correct
@@ -112,10 +119,12 @@ def get_guess(round: int, word: str):
     if round in app.nearests and word in app.nearests[round]:
         rtn["sim"] = app.nearests[round][word][1]
         rtn["rank"] = app.nearests[round][word][0]
+        rtn["tries"] = tries
     else:
         try:
             rtn["sim"] = word2vec.similarity(app.secrets[round], word)
             rtn["rank"] = "1000위 이상"
+            rtn["tries"] = tries
         except KeyError:
             return jsonify({"error": "unknown"}), 404
     return jsonify(rtn)
