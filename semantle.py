@@ -21,6 +21,24 @@ NUM_SECRETS = 4650
 scheduler = BackgroundScheduler()
 scheduler.start()
 current_round = 0;
+calculating = False
+
+def write_last():
+    with open('last.dat', 'wb') as f:
+        # write just current round
+        pickle.dump(current_round, f)
+
+
+def read_last():
+    global current_round
+    try:
+        with open('last.dat', 'rb') as f:
+            current_round = pickle.load(f)
+    except FileNotFoundError:
+        current_round = 0
+
+# read
+read_last()
 
 app = Flask(__name__)
 print("loading valid nearest")
@@ -43,7 +61,12 @@ for offset in range(-2, 2):
 def update_nearest():
     print("scheduled stuff triggered!")
     global current_round
+    global calculating
+    if calculating:
+        return
+    calculating = True
     current_round += 1;
+    write_last()
     next_puzzle = current_round % NUM_SECRETS
     next_word = secrets[next_puzzle]
     to_delete = (next_puzzle - 4) % NUM_SECRETS
@@ -53,6 +76,7 @@ def update_nearest():
         del app.nearests[to_delete]
     app.secrets[next_puzzle] = next_word
     app.nearests[next_puzzle] = get_nearest(next_puzzle, next_word, valid_nearest_words, valid_nearest_vecs)
+    calculating = False
 
 
 @app.route('/')
@@ -77,7 +101,7 @@ def send_static(path):
 
 @app.route('/guess/<int:round>/<string:word>')
 def get_guess(round: int, word: str):
-    print(app.secrets[round])
+    # print(app.secrets[round])
     if app.secrets[round].lower() == word.lower():
         word = app.secrets[round]
         # correct
