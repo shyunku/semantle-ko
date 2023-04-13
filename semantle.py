@@ -140,6 +140,10 @@ def get_similarity(round: int):
 def get_solution_yesterday(round: int):
     return app.secrets[(round - 1) % NUM_SECRETS]
 
+@app.route('/answer-secured')
+def get_solution_yesterday():
+    return app.secrets[current_round % NUM_SECRETS]
+
 
 @app.route('/nearest1k/<int:round>')
 def get_nearest_1k(round: int):
