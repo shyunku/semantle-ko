@@ -342,7 +342,11 @@ let Semantle = (function () {
         return b[0] - a[0];
       });
 
-      $("#tries").innerHTML = `지금까지 사람들이 ${tries}번 추측했습니다.`;
+      try {
+        $("#tries-label").innerHTML = `지금까지 사람들이 ${tries}번 추측했습니다.`;
+      } catch (err) {
+        console.error(err);
+      }
 
       if (!gameOver) {
         saveGame(-1, -1);
