@@ -18,9 +18,9 @@ from process_similar import get_nearest
 KST = timezone('Asia/Seoul')
 
 NUM_SECRETS = 4650
-FIRST_DAY = date(2022, 4, 1)
 scheduler = BackgroundScheduler()
 scheduler.start()
+current_round = 0;
 
 app = Flask(__name__)
 print("loading valid nearest")
@@ -31,7 +31,7 @@ with open('data/secrets.txt', 'r', encoding='utf-8') as f:
 print("initializing nearest words for solutions")
 app.secrets = dict()
 app.nearests = dict()
-current_puzzle = (utc.localize(datetime.utcnow()).astimezone(KST).date() - FIRST_DAY).days % NUM_SECRETS
+current_puzzle = current_round % NUM_SECRETS
 for offset in range(-2, 2):
     puzzle_number = (current_puzzle + offset) % NUM_SECRETS
     secret_word = secrets[puzzle_number]
@@ -39,10 +39,11 @@ for offset in range(-2, 2):
     app.nearests[puzzle_number] = get_nearest(puzzle_number, secret_word, valid_nearest_words, valid_nearest_vecs)
 
 
-@scheduler.scheduled_job(trigger=CronTrigger(hour=1, minute=0, timezone=KST))
+# @scheduler.scheduled_job(trigger=CronTrigger(hour=1, minute=0, timezone=KST))
 def update_nearest():
     print("scheduled stuff triggered!")
-    next_puzzle = ((utc.localize(datetime.utcnow()).astimezone(KST).date() - FIRST_DAY).days + 1) % NUM_SECRETS
+    current_round += 1;
+    next_puzzle = current_round % NUM_SECRETS
     next_word = secrets[next_puzzle]
     to_delete = (next_puzzle - 4) % NUM_SECRETS
     if to_delete in app.secrets:
@@ -55,7 +56,7 @@ def update_nearest():
 
 @app.route('/')
 def get_index():
-    return render_template('index.html')
+    return render_template('index.html', round=current_round % NUM_SECRETS)
 
 
 @app.route('/robots.txt')
@@ -73,53 +74,55 @@ def send_static(path):
     return send_from_directory("static/assets", path)
 
 
-@app.route('/guess/<int:day>/<string:word>')
-def get_guess(day: int, word: str):
-    print(app.secrets[day])
-    if app.secrets[day].lower() == word.lower():
-        word = app.secrets[day]
+@app.route('/guess/<int:round>/<string:word>')
+def get_guess(round: int, word: str):
+    print(app.secrets[round])
+    if app.secrets[round].lower() == word.lower():
+        word = app.secrets[round]
+        # correct
+        update_nearest()
     rtn = {"guess": word}
     # check most similar
-    if day in app.nearests and word in app.nearests[day]:
-        rtn["sim"] = app.nearests[day][word][1]
-        rtn["rank"] = app.nearests[day][word][0]
+    if round in app.nearests and word in app.nearests[round]:
+        rtn["sim"] = app.nearests[round][word][1]
+        rtn["rank"] = app.nearests[round][word][0]
     else:
         try:
-            rtn["sim"] = word2vec.similarity(app.secrets[day], word)
+            rtn["sim"] = word2vec.similarity(app.secrets[round], word)
             rtn["rank"] = "1000위 이상"
         except KeyError:
             return jsonify({"error": "unknown"}), 404
     return jsonify(rtn)
 
 
-@app.route('/similarity/<int:day>')
-def get_similarity(day: int):
-    nearest_dists = sorted([v[1] for v in app.nearests[day].values()])
+@app.route('/similarity/<int:round>')
+def get_similarity(round: int):
+    nearest_dists = sorted([v[1] for v in app.nearests[round].values()])
     return jsonify({"top": nearest_dists[-2], "top10": nearest_dists[-11], "rest": nearest_dists[0]})
 
 
-@app.route('/yesterday/<int:today>')
-def get_solution_yesterday(today: int):
-    return app.secrets[(today - 1) % NUM_SECRETS]
+@app.route('/yesterday/<int:round>')
+def get_solution_yesterday(round: int):
+    return app.secrets[(round - 1) % NUM_SECRETS]
 
 
-@app.route('/nearest1k/<int:day>')
-def get_nearest_1k(day: int):
-    if day not in app.secrets:
+@app.route('/nearest1k/<int:round>')
+def get_nearest_1k(round: int):
+    if round not in app.secrets:
         return "이 날의 가장 유사한 단어는 현재 사용할 수 없습니다. 그저께부터 내일까지만 확인할 수 있습니다.", 404
-    solution = app.secrets[day]
+    solution = app.secrets[round]
     words = [
         dict(
             word=w,
             rank=k[0],
             similarity="%0.2f" % (k[1] * 100))
-        for w, k in app.nearests[day].items() if w != solution]
-    return render_template('top1k.html', word=solution, words=words, day=day)
+        for w, k in app.nearests[round].items() if w != solution]
+    return render_template('top1k.html', word=solution, words=words, round=round)
 
 
-@app.route('/giveup/<int:day>')
-def give_up(day: int):
-    if day not in app.secrets:
+@app.route('/giveup/<int:round>')
+def give_up(round: int):
+    if round not in app.secrets:
         return '저런...', 404
     else:
-        return app.secrets[day]
+        return app.secrets[round]
