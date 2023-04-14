@@ -129,9 +129,7 @@ def update_nearest():
 @app.route('/')
 def get_index():
     global current_round
-    print("render request")
     rendered = render_template('index.html', round=current_round % NUM_SECRETS, last_time=last_time)
-    print("rendered")
     return rendered
 
 

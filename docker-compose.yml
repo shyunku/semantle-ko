@@ -6,5 +6,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3999:3999"
+      - "3998:3998"
     volumes:
       - .:/app
