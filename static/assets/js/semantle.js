@@ -344,9 +344,9 @@ let Semantle = (function () {
       });
 
       try {
-        $(
-          "#tries-label"
-        ).innerHTML = `지금까지 사람들이 ${tries}번 추측했습니다. 유사도 최고기록은 ${currentMax}입니다.`;
+        $("#tries-label").innerHTML = `지금까지 사람들이 ${tries}번 추측했습니다. 유사도 최고기록은 ${(
+          currentMax * 100
+        ).toFixed(2)}% 입니다.`;
       } catch (err) {
         console.error(err);
       }
