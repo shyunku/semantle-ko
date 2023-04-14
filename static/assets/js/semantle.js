@@ -56,6 +56,12 @@ function fastInterval(func, period) {
   return setInterval(func, period);
 }
 
+function applyTries(currentMax, currentMaxRank, tries) {
+  $("#tries-label").innerHTML = `지금까지 사람들이 <b>${tries}</b>번 추측했습니다. 유사도 최고기록은 ${(
+    currentMax * 100
+  ).toFixed(2)} ${currentMax == 1 ? "" : `(${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`})`} 입니다.`;
+}
+
 function updateLastTime() {
   if (startTime == null) return;
   const diff = parseInt((Date.now() - startTime * 1000) / 1000);
@@ -81,7 +87,8 @@ async function updateLatest() {
   const response = await fetch(url);
   try {
     let res = await response.json();
-    console.log(res);
+    const { max, max_rank, round, tries } = res;
+    applyTries(max, max_rank, tries);
   } catch (e) {
     return null;
   }
@@ -419,11 +426,7 @@ let Semantle = (function () {
 
       try {
         if (!alreadyExists) {
-          $("#tries-label").innerHTML = `지금까지 사람들이 <b>${tries}</b>번 추측했습니다. 유사도 최고기록은 ${(
-            currentMax * 100
-          ).toFixed(2)} ${
-            currentMax == 1 ? "" : `(${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`})`
-          } 입니다.`;
+          applyTries(currentMax, currentMaxRank, tries);
         }
       } catch (err) {
         console.error(err);
