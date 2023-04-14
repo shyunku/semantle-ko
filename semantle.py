@@ -261,22 +261,19 @@ print("Server setup done.")
 
 # websocket
 connected_clients = set()
-websocket_lock = threading.Lock()
 
 def broadcast(type, data):
     global connected_clients
-    with websocket_lock:
-        for client in connected_clients:
-            client.send(json.dumps({
-                "type": type,
-                "data": data
-            }))
+    for client in connected_clients:
+        client.send(json.dumps({
+            "type": type,
+            "data": data
+        }))
 
 async def echo(websocket, path):
     global connected_clients
-    with websocket_lock:
-        connected_clients.add(websocket)
-        broadcast("client_count", len(connected_clients))
+    connected_clients.add(websocket)
+    broadcast("client_count", len(connected_clients))
 
     try:
         async for message in websocket:
@@ -314,9 +311,8 @@ async def echo(websocket, path):
             response_json = json.dumps(response)
             await websocket.send(response_json)
     finally:
-        with websocket_lock:
-            connected_clients.remove(websocket)
-            broadcast("client_count", len(connected_clients))
+        connected_clients.remove(websocket)
+        broadcast("client_count", len(connected_clients))
 
 
 async def start_server():
