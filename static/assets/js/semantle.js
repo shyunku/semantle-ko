@@ -107,6 +107,11 @@ async function updateLatest() {
     let res = await response.json();
     const { max, max_rank, round, tries } = res;
     applyTries(max, max_rank, tries);
+    if (round > puzzleNumber) {
+      $(
+        "done-msg"
+      ).innerHTML = `<span style="font-weight: bold; color: red;">누군가 이번 문제를 맞춰 새로 업데이트되었습니다. 새로고침을 눌러주세요!</span>`;
+    }
   } catch (e) {
     return null;
   }
