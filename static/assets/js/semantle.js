@@ -428,6 +428,7 @@ let Semantle = (function () {
   }
 
   function updateGuesses(guess) {
+    console.log(guesses);
     let inner = `<tr><th id="chronoOrder">#</th><th id="alphaOrder">추측한 단어</th><th id="similarityOrder">유사도</th><th>유사도 순위</th></tr>`;
     /* This is dumb: first we find the most-recent word, and put
            it at the top.  Then we do the rest. */
@@ -748,7 +749,6 @@ let Semantle = (function () {
     });
 
     on("maxSimRank", (data) => {
-      console.log(data);
       applyMaxSimlarity(data.max, data.max_rank);
     });
   });
