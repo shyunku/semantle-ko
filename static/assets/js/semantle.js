@@ -49,7 +49,7 @@ function share() {
 const words_selected = [];
 const cache = {};
 let similarityStory = null;
-const expo = 2;
+const expo = 20;
 
 function mlog(base, x) {
   return Math.log(x) / Math.log(base);
