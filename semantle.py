@@ -33,6 +33,8 @@ def write_last():
 
 def read_last():
     global current_round
+    global current_max
+    global tries
     try:
         with open('last.dat', 'rb') as f:
             current_round, current_max, tries = pickle.load(f)
