@@ -160,7 +160,7 @@ def send_static(path):
 
 
 @app.route('/guess/<int:round>/<string:word>')
-def get_guess(round: int, word: str):
+async def get_guess(round: int, word: str):
     # print(app.secrets[round])
     global tries
     global current_max
@@ -172,7 +172,7 @@ def get_guess(round: int, word: str):
             return jsonify({"error": "calculating"}), 404
         tries += 1
     
-    broadcast("tries", tries)
+    await broadcast("tries", tries)
     
     correct = False
     if app.secrets[round].lower() == word.lower():
