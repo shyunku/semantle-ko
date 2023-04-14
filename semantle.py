@@ -122,6 +122,9 @@ def get_guess(round: int, word: str):
         # correct
         update_nearest()
     rtn = {"guess": word}
+
+    write_last()
+
     # check most similar
     if round in app.nearests and word in app.nearests[round]:
         similarity = app.nearests[round][word][1]
