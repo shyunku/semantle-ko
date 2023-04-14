@@ -271,5 +271,11 @@ async def handle(websocket, path):
         await websocket.send(response)
 
 start_websocket = websockets.serve(handle, "0.0.0.0", 3998)
-asyncio.get_event_loop().run_until_complete(start_websocket)
-asyncio.get_event_loop().run_forever()
+
+def run_websocket_server():
+    asyncio.get_event_loop().run_until_complete(start_websocket)
+    asyncio.get_event_loop().run_forever()
+
+# 별도의 스레드에서 웹소켓 서버를 실행합니다.
+websocket_server_thread = threading.Thread(target=run_websocket_server, daemon=True)
+websocket_server_thread.start()
