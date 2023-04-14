@@ -192,7 +192,6 @@ def get_guess(round: int, word: str):
 
             if similarity > current_max:
                 current_max = similarity
-                current_max_rank = -1
 
             rtn["max"] = current_max
             rtn["max_rank"] = current_max_rank

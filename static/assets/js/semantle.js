@@ -57,9 +57,19 @@ function fastInterval(func, period) {
 }
 
 function applyTries(currentMax, currentMaxRank, tries) {
-  $("#tries-label").innerHTML = `지금까지 사람들이 <b>${tries}</b>번 추측했습니다. 유사도 최고기록은 ${(
+  let color;
+  if (currentMaxRank != -1) {
+    if (color <= 5) color = `color: rgb(221, 81, 81)`;
+    else if (color <= 10) color = `color: rgb(217, 189, 69)`;
+    else if (color <= 100) color = `color: rgb(92, 171, 85)`;
+  }
+  $(
+    "#tries-label"
+  ).innerHTML = `지금까지 사람들이 <b>${tries}</b>번 추측했습니다. 유사도 최고기록은 <span style="font-weight: bold; ${color}">${(
     currentMax * 100
-  ).toFixed(2)} ${currentMax == 1 ? "" : `(${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`})`} 입니다.`;
+  ).toFixed(2)} ${
+    currentMax == 1 ? "" : `(${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`})`
+  }</span> 입니다.`;
 }
 
 function updateLastTime() {
