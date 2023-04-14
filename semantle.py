@@ -299,7 +299,11 @@ async def echo(websocket, path):
 
             reqId = data["reqId"]
             type = data["type"]
-            req_data = data["data"]
+            try:
+                req_data = data["data"]
+            except KeyError:
+                req_data = None
+            
             if type == "ping":
                 res_data = req_data
             elif type == "tries":
