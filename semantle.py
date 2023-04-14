@@ -265,7 +265,7 @@ connected_clients = set()
 async def broadcast(type, data):
     global connected_clients
     for client in connected_clients:
-        client.send(json.dumps({
+        await client.send(json.dumps({
             "type": type,
             "data": data
         }))
