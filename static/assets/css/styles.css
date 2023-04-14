@@ -254,6 +254,11 @@ button {
   text-align: left;
 }
 
+.problem-info .title {
+  color: rgb(81, 81, 81);
+  width: 2em;
+}
+
 .percentile,
 .progress-container,
 .progress-bar {

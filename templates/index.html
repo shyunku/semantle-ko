@@ -120,9 +120,23 @@
         </div>
       </div>
       <p id="similarity-story"></p>
-      <p style="font-size: 0.7em">
-        이 문제가 출제된 후 지난 시간: <span id="current-proc-time"></span><br />
-        현재 이 문제를 풀고 있는 사람 수: <span id="current-user-counts" style="font-weight: bold">-</span> 명
+      <p style="font-size: 0.8em">
+        <div class="problem-info">
+          <span class="title">이 문제가 출제된 후 지난 시간: </span>
+          <span id="current-proc-time"></span>
+        </div>
+        <div class="problem-info">
+          <span class="title">현재 이 문제를 풀고 있는 사람 수: </span>
+          <span id="current-user-counts" style="font-weight: bold">-</span> 명
+        </div>
+        <div class="problem-info">
+          <span class="title">이 문제를 사람들이 추측한 횟수: </span>
+          <span id="total-tries" style="font-weight: bold">-</span> 회
+        </div>
+        <div class="problem-info">
+          <span class="title">이 문제를 사람들이 추측한 최대 유사도: </span>
+          <span id="max-similarity">-</span> %
+        </div>
       </p>
       <p id="tries-label"></p>
       <p id="done-msg"></p>

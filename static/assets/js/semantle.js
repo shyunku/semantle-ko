@@ -64,13 +64,10 @@ function applyTries(currentMax, currentMaxRank, tries) {
     else if (currentMaxRank <= 100) color = `color: rgb(92, 171, 85)`;
     else currentMaxRank = `color: #00b5ef`;
   }
-  $(
-    "#tries-label"
-  ).innerHTML = `지금까지 사람들이 <b>${tries}</b>번 추측했습니다. 유사도 최고기록은 <span style="font-weight: bold; ${color}">${(
-    currentMax * 100
-  ).toFixed(2)} ${
+  $("#total-tries").innerHTML = `${tries}`;
+  $("#max-similarity").innerHTML = `<span style="font-weight: bold; ${color}">${(currentMax * 100).toFixed(2)} ${
     currentMax == 1 ? "" : `(${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`})`
-  }</span> 입니다.`;
+  }</span>`;
 }
 
 function updateLastTime() {

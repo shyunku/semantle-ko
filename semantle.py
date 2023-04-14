@@ -26,11 +26,18 @@ KST = timezone('Asia/Seoul')
 def now():
     return datetime.now(utc).timestamp()
 
-async def concurrent_listing():
-    # iterate with 1 second delay
-    for i in range(1000):
-        list_threads()
-        await asyncio.sleep(1)
+# websocket
+# websocket
+connected_clients = set()
+
+async def broadcast(type, data):
+    global connected_clients
+    for client in connected_clients:
+        await client.send(json.dumps({
+            "type": type,
+            "data": data
+        }))
+
 
 NUM_SECRETS = 4650
 current_round = 12;
@@ -90,7 +97,7 @@ app.logger.setLevel(logging.DEBUG)
 # @scheduler.scheduled_job(trigger=CronTrigger(hour=1, minute=0, timezone=KST))
 
 def next_stage(prev):
-    print("scheduled stuff triggered!")
+    print(f"scheduled stuff triggered: problem {prev + 1}")
     global current_round
     global calculating
     global tries
@@ -108,6 +115,8 @@ def next_stage(prev):
         current_max_rank = -1
         last_time = now()
         write_last()
+    
+    asyncio.run(broadcast("new_round", current_round))
     
     next_puzzle = current_round % NUM_SECRETS
     next_word = secrets[next_puzzle]
@@ -259,17 +268,7 @@ def give_up(round: int):
 
 print("Server setup done.")
 
-# websocket
-connected_clients = set()
-
-async def broadcast(type, data):
-    global connected_clients
-    for client in connected_clients:
-        await client.send(json.dumps({
-            "type": type,
-            "data": data
-        }))
-
+# websocket server
 async def echo(websocket, path):
     global connected_clients
     connected_clients.add(websocket)
@@ -313,7 +312,6 @@ async def echo(websocket, path):
     finally:
         connected_clients.remove(websocket)
         await broadcast("client_count", len(connected_clients))
-
 
 async def start_server():
     server = await websockets.serve(echo, "0.0.0.0", 3998)
