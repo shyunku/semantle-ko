@@ -51,27 +51,30 @@ const cache = {};
 let similarityStory = null;
 const expo = 20;
 
+function updateLastTime() {
+  if (startTime == null) return;
+  const diff = parseInt((Date.now() - startTime * 1000) / 1000);
+  if (diff < 0) return;
+  let text = "";
+  if (diff < 60) {
+    text = `${diff}초`;
+  } else if (diff < 3600) {
+    text = `${Math.floor(diff / 60)}분 ${diff % 60}초`;
+  } else if (diff < 86400) {
+    text = `${Math.floor(diff / 3600)}시간 ${Math.floor((diff % 3600) / 60)}분 ${diff % 60}초`;
+  } else {
+    text = `${Math.floor(diff / 86400)}일 ${Math.floor((diff % 86400) / 3600)}시간 ${Math.floor(
+      (diff % 3600) / 60
+    )}분 ${diff % 60}초`;
+  }
+
+  $("#current-proc-time").innerHTML = `현재 문제는 <b>${text}</b> 동안 풀리지 않았습니다.`;
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   // update with start time
-  const th = setInterval(function () {
-    if (startTime == null) return;
-    const diff = parseInt((Date.now() - startTime * 1000) / 1000);
-    if (diff < 0) return;
-    let text = "";
-    if (diff < 60) {
-      text = `${diff}초`;
-    } else if (diff < 3600) {
-      text = `${Math.floor(diff / 60)}분 ${diff % 60}초`;
-    } else if (diff < 86400) {
-      text = `${Math.floor(diff / 3600)}시간 ${Math.floor((diff % 3600) / 60)}분 ${diff % 60}초`;
-    } else {
-      text = `${Math.floor(diff / 86400)}일 ${Math.floor((diff % 86400) / 3600)}시간 ${Math.floor(
-        (diff % 3600) / 60
-      )}분 ${diff % 60}초`;
-    }
-
-    $("#current-proc-time").innerHTML = `현재 문제는 <b>${text}</b> 동안 풀리지 않았습니다.`;
-  }, 1000);
+  updateLastTime();
+  const th = setInterval(updateLastTime, 1000);
 });
 
 function mlog(base, x) {
