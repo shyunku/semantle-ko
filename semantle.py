@@ -272,7 +272,10 @@ asyncio.run(main())
 
 def list_threads():
     for thread in threading.enumerate():
-        print(f"{thread.name} (ID: {thread.ident})")
+        # write to file
+        log = f"{thread.name} (ID: {thread.ident})\n"
+        with open("threads.log", "a") as f:
+            f.write(log)
 
 async def concurrent_listing():
     # iterate with 1 second delay
