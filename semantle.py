@@ -112,6 +112,8 @@ def send_static(path):
 def get_guess(round: int, word: str):
     # print(app.secrets[round])
     global tries
+    global current_max
+    
     tries += 1
     if app.secrets[round].lower() == word.lower():
         word = app.secrets[round]
@@ -123,7 +125,6 @@ def get_guess(round: int, word: str):
         similarity = app.nearests[round][word][1]
         rank = app.nearests[round][word][0]
 
-        global current_max
         if similarity > current_max:
             current_max = similarity
 
@@ -138,7 +139,6 @@ def get_guess(round: int, word: str):
             rtn["rank"] = "1000위 이상"
             rtn["tries"] = tries
 
-            global current_max
             if similarity > current_max:
                 current_max = similarity
 
