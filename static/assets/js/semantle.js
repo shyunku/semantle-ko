@@ -55,7 +55,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // update with start time
   const th = setInterval(function () {
     if (startTime == null) return;
-    const diff = Date.now() - startTime;
+    const diff = parseInt(Date.now() - startTime * 1000);
     if (diff < 0) return;
     let text = "";
     if (diff < 60) {
