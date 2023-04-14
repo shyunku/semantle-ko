@@ -90,7 +90,14 @@ function updateLastTime() {
     )}분 ${diff % 60}초`;
   }
 
-  $("#current-proc-time").innerHTML = `현재 문제는 <b>${text}</b> 동안 풀리지 않았습니다.`;
+  let color;
+  if (diff < 60 * 10) color = `color: #00b5ef`;
+  else if (diff < 60 * 30) color = `color: rgb(92, 171, 85)`;
+  else if (diff < 60 * 60 * 3) color = `color: rgb(217, 189, 69)`;
+  else if (diff < 60 * 60 * 24) color = `color: rgb(221, 81, 81)`;
+  else color = `color: red`;
+
+  $("#current-proc-time").innerHTML = `현재 문제는 <span style="${color}">${text}</span> 동안 풀리지 않았습니다.`;
 }
 
 async function updateLatest() {
