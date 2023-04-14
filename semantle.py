@@ -161,9 +161,9 @@ def get_guess(round: int, word: str):
         current_max = 0
     rtn = {"guess": word}
 
-    print(current_max)
-
     write_last()
+
+    print("guess", word, "correct", correct, "round", round, "tries", tries, "max", current_max, "max_rank", current_max_rank)
 
     # check most similar
     if round in app.nearests and word in app.nearests[round]:
