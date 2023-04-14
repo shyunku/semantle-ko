@@ -254,6 +254,10 @@ button {
   text-align: left;
 }
 
+.problem-info {
+  font-size: 0.6em;
+}
+
 .problem-info .title {
   display: inline-block;
   opacity: 0.6;
