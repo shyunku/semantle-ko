@@ -51,6 +51,29 @@ const cache = {};
 let similarityStory = null;
 const expo = 20;
 
+$(document).ready(function () {
+  // update with start time
+  const th = setInterval(function () {
+    if (startTime == null) return;
+    const diff = Date.now() - startTime;
+    if (diff < 0) return;
+    let text = "";
+    if (diff < 60) {
+      text = `${diff}초`;
+    } else if (diff < 3600) {
+      text = `${Math.floor(diff / 60)}분 ${diff % 60}초`;
+    } else if (diff < 86400) {
+      text = `${Math.floor(diff / 3600)}시간 ${Math.floor((diff % 3600) / 60)}분 ${diff % 60}초`;
+    } else {
+      text = `${Math.floor(diff / 86400)}일 ${Math.floor((diff % 86400) / 3600)}시간 ${Math.floor(
+        (diff % 3600) / 60
+      )}분 ${diff % 60}초`;
+    }
+
+    $("#current-proc-time").innerHTML = `현재 문제는 <b>${text}</b> 동안 풀리지 않았습니다.`;
+  }, 1000);
+});
+
 function mlog(base, x) {
   return Math.log(x) / Math.log(base);
 }

@@ -18,19 +18,23 @@ from logging.handlers import RotatingFileHandler
 
 KST = timezone('Asia/Seoul')
 
+def now():
+    return datetime.now(utc).timestamp()
+
 NUM_SECRETS = 4650
 current_round = 12;
 calculating = False
 current_max = 0
 current_max_rank = -1
 tries = 0
+last_time = now()
 
 lock = threading.Lock()
 
 def write_last():
     with open('last.dat', 'wb') as f:
         # write 3 fields current round, current_max, tries
-        pickle.dump((current_round, current_max, current_max_rank, tries), f)
+        pickle.dump((current_round, current_max, current_max_rank, tries, last_time), f)
 
 
 def read_last():
@@ -38,12 +42,18 @@ def read_last():
     global current_max
     global current_max_rank
     global tries
+    global last_time
     try:
         with open('last.dat', 'rb') as f:
             current_round, current_max, current_max_rank, tries = pickle.load(f)
+            last_time = now()
     except FileNotFoundError:
-        print("last.dat not found, starting from ~")
-        # current_round = 0
+        try:
+            with open('last.dat', 'rb') as f:
+                current_round, current_max, current_max_rank, tries, last_time = pickle.load(f)
+        except FileNotFoundError:
+            print("last.dat not found, starting from ~")
+            # current_round = 0
 
 # read
 read_last()
@@ -79,6 +89,7 @@ def next_stage(prev):
     global tries
     global current_max
     global current_max_rank
+    global last_time
     
     with lock:
         if calculating:
@@ -88,6 +99,7 @@ def next_stage(prev):
         tries = 0
         current_max = 0
         current_max_rank = -1
+        last_time = now()
         write_last()
     
     next_puzzle = current_round % NUM_SECRETS
@@ -112,7 +124,7 @@ def update_nearest():
 def get_index():
     global current_round
     print("render request")
-    rendered = render_template('index.html', round=current_round % NUM_SECRETS)
+    rendered = render_template('index.html', round=current_round % NUM_SECRETS, last_time=last_time)
     print("rendered")
     return rendered
 
