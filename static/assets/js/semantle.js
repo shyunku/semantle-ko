@@ -535,6 +535,10 @@ let Semantle = (function () {
       chrono_forward = 1;
       updateGuesses(guess);
     });
+    const found = guesses.reduce((acc, cur) => {
+      return acc + (typeof cur[2] == "number" ? 1 : 0);
+    }, 0);
+    $("#found").innerHTML = `상위 1000개 단어 중 <b>${found}개</b>를 찾았습니다.`;
   }
 
   function toggleDarkMode(on) {
