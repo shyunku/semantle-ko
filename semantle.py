@@ -13,6 +13,10 @@ import threading
 import word2vec
 from process_similar import get_nearest
 
+import cProfile
+import pstats
+from io import StringIO
+
 KST = timezone('Asia/Seoul')
 
 NUM_SECRETS = 4650
@@ -23,6 +27,22 @@ current_max_rank = -1
 tries = 0
 
 lock = threading.Lock()
+
+def profile_this(func):
+    def wrapper(*args, **kwargs):
+        profiler = cProfile.Profile()
+        profiler.enable()
+        result = func(*args, **kwargs)
+        profiler.disable()
+
+        s = StringIO()
+        sortby = 'cumulative'
+        ps = pstats.Stats(profiler, stream=s).sort_stats(sortby)
+        ps.print_stats()
+        print(s.getvalue())
+
+        return result
+    return wrapper
 
 def write_last():
     with open('last.dat', 'wb') as f:
@@ -121,6 +141,7 @@ def send_static(path):
 
 
 @app.route('/guess/<int:round>/<string:word>')
+@profile_this
 def get_guess(round: int, word: str):
     # print(app.secrets[round])
     global tries
