@@ -51,7 +51,7 @@ const cache = {};
 let similarityStory = null;
 const expo = 20;
 
-$(document).ready(function () {
+window.addEventListener("DOMContentLoaded", () => {
   // update with start time
   const th = setInterval(function () {
     if (startTime == null) return;
