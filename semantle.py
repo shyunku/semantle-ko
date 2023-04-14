@@ -23,21 +23,23 @@ scheduler.start()
 current_round = 12;
 calculating = False
 current_max = 0
+current_max_rank = -1
 tries = 0
 
 def write_last():
     with open('last.dat', 'wb') as f:
         # write 3 fields current round, current_max, tries
-        pickle.dump((current_round, current_max, tries), f)
+        pickle.dump((current_round, current_max, current_max_rank, tries), f)
 
 
 def read_last():
     global current_round
     global current_max
+    global current_max_rank
     global tries
     try:
         with open('last.dat', 'rb') as f:
-            current_round, current_max, tries = pickle.load(f)
+            current_round, current_max, current_max_rank, tries = pickle.load(f)
     except FileNotFoundError:
         print("last.dat not found, starting from ~")
         # current_round = 0
@@ -69,6 +71,7 @@ def update_nearest():
     global calculating
     global tries
     global current_max
+    global current_max_rank
     if calculating:
         return
     
@@ -76,6 +79,7 @@ def update_nearest():
     current_round += 1;
     tries = 0
     current_max = 0
+    current_max_rank = -1
 
     write_last()
     next_puzzle = current_round % NUM_SECRETS
@@ -115,6 +119,7 @@ def get_guess(round: int, word: str):
     # print(app.secrets[round])
     global tries
     global current_max
+    global current_max_rank
     
     tries += 1
     if app.secrets[round].lower() == word.lower():
@@ -132,11 +137,13 @@ def get_guess(round: int, word: str):
 
         if similarity > current_max:
             current_max = similarity
+            current_max_rank = rank
 
         rtn["sim"] = similarity
         rtn["rank"] = rank
         rtn["tries"] = tries
         rtn["max"] = current_max
+        rtn["max_rank"] = current_max_rank
     else:
         try:
             similarity = word2vec.similarity(app.secrets[round], word)
@@ -148,6 +155,7 @@ def get_guess(round: int, word: str):
                 current_max = similarity
 
             rtn["max"] = current_max
+            rtn["max_rank"] = -1
         except KeyError:
             return jsonify({"error": "unknown"}), 404
     return jsonify(rtn)

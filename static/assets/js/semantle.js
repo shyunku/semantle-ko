@@ -318,6 +318,7 @@ let Semantle = (function () {
       let similarity = guessData.sim * 100.0;
       let tries = guessData.tries ?? 0;
       let currentMax = guessData.max ?? 0;
+      let currentMaxRank = guessData.max_rank ?? -1;
       if (!guessed.has(guess)) {
         if (guessCount == 0) {
           storage.setItem("startTime", Date.now());
@@ -346,7 +347,7 @@ let Semantle = (function () {
       try {
         $("#tries-label").innerHTML = `지금까지 사람들이 ${tries}번 추측했습니다. 유사도 최고기록은 ${(
           currentMax * 100
-        ).toFixed(2)}% 입니다.`;
+        ).toFixed(2)}% (${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`}) 입니다.`;
       } catch (err) {
         console.error(err);
       }
