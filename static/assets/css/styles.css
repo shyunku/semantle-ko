@@ -273,10 +273,12 @@ button {
 .switch_except {
   display: flex;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .switch_except label {
   margin-left: 5px;
+  font-size: 0.8em;
 }
 
 .percentile,
