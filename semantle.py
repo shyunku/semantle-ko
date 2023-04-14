@@ -261,18 +261,18 @@ def give_up(round: int):
 print("Server setup done.")
 
 # websocket
-async def handle(websocket, path):
-    async for message in websocket:
-        # 클라이언트로부터 메시지를 받았을 때의 처리 로직
-        print(f"Received message: {message}")
+# async def handle(websocket, path):
+#     async for message in websocket:
+#         # 클라이언트로부터 메시지를 받았을 때의 처리 로직
+#         print(f"Received message: {message}")
         
-        # 클라이언트로 메시지를 보냅니다.
-        response = f"Server received: {message}"
-        await websocket.send(response)
+#         # 클라이언트로 메시지를 보냅니다.
+#         response = f"Server received: {message}"
+#         await websocket.send(response)
 
-async def main():
-    async with websockets.serve(handle, "0.0.0.0", 3998):
-        print("Websocket server started")
-        await asyncio.Future()  # 무한 루프를 방지합니다.
+# async def main():
+#     async with websockets.serve(handle, "0.0.0.0", 3998):
+#         print("Websocket server started")
+#         await asyncio.Future()  # 무한 루프를 방지합니다.
 
-asyncio.run(main())
+# asyncio.run(main())
