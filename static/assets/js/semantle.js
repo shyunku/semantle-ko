@@ -124,9 +124,14 @@ window.addEventListener("DOMContentLoaded", () => {
   }, 1000);
   const f2 = fastInterval(() => {
     updateLatest();
-  }, 1500);
+  }, 1000);
 
   const socket = new WebSocket("ws://43.200.219.71:3998");
+  socket.onopen = function (e) {
+    console.log("[open] Connection established");
+    console.log("Sending to server");
+    socket.send("Hello Server!");
+  };
 });
 
 function mlog(base, x) {
