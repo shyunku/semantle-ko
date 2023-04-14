@@ -281,7 +281,7 @@ async def echo(websocket, path):
     try:
         async for message in websocket:
             # 클라이언트로부터 메시지를 받았을 때의 처리 로직
-            # print(f"Received message: {message}")
+            print(f"Received message: {message}")
 
             # parse as json
             try:

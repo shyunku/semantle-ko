@@ -170,7 +170,6 @@ window.addEventListener("DOMContentLoaded", () => {
     pingThread = fastInterval(async () => {
       let data = await sendSync("ping", Date.now());
       const diff = Date.now() - data;
-      console.log(diff);
       $("#ping-status").innerHTML = `${diff}`;
     }, 1000);
   };
