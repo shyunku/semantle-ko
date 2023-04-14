@@ -121,9 +121,11 @@ def update_nearest():
 
 
 @app.route('/')
-@profile_this
 def get_index():
+    global current_round
+    print("render request")
     rendered = render_template('index.html', round=current_round % NUM_SECRETS)
+    print("rendered")
     return rendered
 
 
