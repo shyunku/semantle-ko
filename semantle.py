@@ -13,9 +13,8 @@ import threading
 import word2vec
 from process_similar import get_nearest
 
-import cProfile
-import pstats
-from io import StringIO
+import logging
+from logging.handlers import RotatingFileHandler
 
 KST = timezone('Asia/Seoul')
 
@@ -27,22 +26,6 @@ current_max_rank = -1
 tries = 0
 
 lock = threading.Lock()
-
-def profile_this(func):
-    def wrapper(*args, **kwargs):
-        profiler = cProfile.Profile()
-        profiler.enable()
-        result = func(*args, **kwargs)
-        profiler.disable()
-
-        s = StringIO()
-        sortby = 'cumulative'
-        ps = pstats.Stats(profiler, stream=s).sort_stats(sortby)
-        ps.print_stats()
-        print(s.getvalue())
-
-        return result
-    return wrapper
 
 def write_last():
     with open('last.dat', 'wb') as f:
@@ -81,6 +64,11 @@ for offset in range(-2, 2):
     app.secrets[puzzle_number] = secret_word
     app.nearests[puzzle_number] = get_nearest(puzzle_number, secret_word, valid_nearest_words, valid_nearest_vecs)
 
+# Flask 앱 생성 후에 추가
+handler = RotatingFileHandler("app.log", maxBytes=10000, backupCount=3)
+handler.setLevel(logging.DEBUG)
+app.logger.addHandler(handler)
+app.logger.setLevel(logging.DEBUG)
 
 # @scheduler.scheduled_job(trigger=CronTrigger(hour=1, minute=0, timezone=KST))
 
@@ -145,7 +133,6 @@ def send_static(path):
 
 
 @app.route('/guess/<int:round>/<string:word>')
-@profile_this
 def get_guess(round: int, word: str):
     # print(app.secrets[round])
     global tries
