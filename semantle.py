@@ -16,6 +16,9 @@ from process_similar import get_nearest
 import logging
 from logging.handlers import RotatingFileHandler
 
+import asyncio
+import websockets
+
 KST = timezone('Asia/Seoul')
 
 def now():
@@ -246,3 +249,20 @@ def give_up(round: int):
         return '저런...', 404
     else:
         return app.secrets[round]
+
+
+# websocket
+async def handle(websocket, path):
+    async for message in websocket:
+        # 클라이언트로부터 메시지를 받았을 때의 처리 로직
+        print(f"Received message: {message}")
+        
+        # 클라이언트로 메시지를 보냅니다.
+        response = f"Server received: {message}"
+        await websocket.send(response)
+
+async def main():
+    async with websockets.serve(handle, "localhost", 3998):
+        await asyncio.Future()  # 무한 루프를 방지합니다.
+
+asyncio.run(main())
