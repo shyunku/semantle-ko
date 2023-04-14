@@ -200,6 +200,10 @@ def get_guess(round: int, word: str):
         
     return jsonify(rtn)
 
+@app.route('/fetch-updated')
+def get_updated():
+    return jsonify({"round": current_round % NUM_SECRETS, "tries": tries, "max": current_max, "max_rank": current_max_rank})
+
 
 @app.route('/similarity/<int:round>')
 def get_similarity(round: int):
@@ -209,8 +213,6 @@ def get_similarity(round: int):
 
 @app.route('/yesterday/<int:round>')
 def get_solution_yesterday(round: int):
-    if round >= current_round:
-        return jsonify({"error": "future"}), 404
     return app.secrets[(round - 1) % NUM_SECRETS]
 
 @app.route('/answer-secured')
@@ -220,6 +222,9 @@ def get_solution():
 
 @app.route('/nearest1k/<int:round>')
 def get_nearest_1k(round: int):
+    global current_round
+    if round >= current_round:
+        return jsonify({"error": "future"}), 404
     if round not in app.secrets:
         return "이 날의 가장 유사한 단어는 현재 사용할 수 없습니다. 그저께부터 내일까지만 확인할 수 있습니다.", 404
     solution = app.secrets[round]

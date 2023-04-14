@@ -51,6 +51,11 @@ const cache = {};
 let similarityStory = null;
 const expo = 20;
 
+function fastInterval(func, period) {
+  func();
+  return setInterval(func, period);
+}
+
 function updateLastTime() {
   if (startTime == null) return;
   const diff = parseInt((Date.now() - startTime * 1000) / 1000);
@@ -71,10 +76,25 @@ function updateLastTime() {
   $("#current-proc-time").innerHTML = `현재 문제는 <b>${text}</b> 동안 풀리지 않았습니다.`;
 }
 
+async function updateLatest() {
+  const url = "/fetch-updated";
+  const response = await fetch(url);
+  try {
+    let res = await response.json();
+    console.log(res);
+  } catch (e) {
+    return null;
+  }
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   // update with start time
-  updateLastTime();
-  const th = setInterval(updateLastTime, 1000);
+  const f1 = fastInterval(() => {
+    updateLastTime();
+  }, 1000);
+  const f2 = fastInterval(() => {
+    updateLatest();
+  }, 3000);
 });
 
 function mlog(base, x) {
