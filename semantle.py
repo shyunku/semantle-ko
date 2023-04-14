@@ -271,7 +271,7 @@ async def handle(websocket, path):
         await websocket.send(response)
 
 async def main():
-    async with websockets.serve(handle, "0.0.0.0", 3998):
+    async with websockets.serve(handle, "localhost", 3998):
         print("Websocket server started")
         await asyncio.Future()  # 무한 루프를 방지합니다.
 
