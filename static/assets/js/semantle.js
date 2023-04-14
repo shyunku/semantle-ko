@@ -315,7 +315,7 @@ let Semantle = (function () {
       $("#dummy").focus(); // to fix ios buffer issue
       $("#guess").focus();
 
-      const alreadyExists = cache.hasOwnProperty(word);
+      const alreadyExists = cache.hasOwnProperty(guess);
       const guessData = await submitGuess(guess);
 
       if (guessData == null) {
