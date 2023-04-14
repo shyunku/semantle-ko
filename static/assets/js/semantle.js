@@ -59,10 +59,10 @@ function fastInterval(func, period) {
 function applyTries(currentMax, currentMaxRank, tries) {
   let color;
   if (currentMaxRank != -1) {
-    if (color <= 5) color = `color: rgb(221, 81, 81)`;
-    else if (color <= 10) color = `color: rgb(217, 189, 69)`;
-    else if (color <= 100) color = `color: rgb(92, 171, 85)`;
-    else color = `color: #00b5ef`;
+    if (currentMaxRank <= 5) color = `color: rgb(221, 81, 81)`;
+    else if (currentMaxRank <= 10) color = `color: rgb(217, 189, 69)`;
+    else if (currentMaxRank <= 100) color = `color: rgb(92, 171, 85)`;
+    else currentMaxRank = `color: #00b5ef`;
   }
   $(
     "#tries-label"
@@ -119,7 +119,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }, 1000);
   const f2 = fastInterval(() => {
     updateLatest();
-  }, 3000);
+  }, 1500);
 });
 
 function mlog(base, x) {
