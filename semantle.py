@@ -190,10 +190,6 @@ def get_guess(round: int, word: str):
             rtn["rank"] = "1000위 이상"
             rtn["tries"] = tries
 
-            with lock:
-                if similarity > current_max:
-                    current_max = similarity
-
             rtn["max"] = current_max
             rtn["max_rank"] = current_max_rank
         except KeyError:
@@ -213,6 +209,8 @@ def get_similarity(round: int):
 
 @app.route('/yesterday/<int:round>')
 def get_solution_yesterday(round: int):
+    if round >= current_round:
+        return jsonify({"error": "future"}), 404
     return app.secrets[(round - 1) % NUM_SECRETS]
 
 @app.route('/answer-secured')
