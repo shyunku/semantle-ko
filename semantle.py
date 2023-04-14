@@ -149,7 +149,10 @@ def get_guess(round: int, word: str):
         with lock:
             if similarity > current_max:
                 current_max = similarity
-                current_max_rank = rank
+                if current_max == 100:
+                    current_max_rank = 0
+                else:
+                    current_max_rank = rank
 
         rtn["sim"] = similarity
         rtn["rank"] = rank

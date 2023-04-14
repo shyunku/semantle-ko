@@ -63,8 +63,19 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
   if (typeof percentile === "number") {
     closeClass = "close";
     percentileText = `<span class="percentile">${percentile}</span>&nbsp;`;
+    bg = "";
+    if (percentile == 1) {
+      // rainbow gradient
+      bg = `background-image: linear-gradient(90deg, rgb(16 255 0) 0%, rgb(255 205 22) 50%, rgb(255, 0, 0) 100%);`;
+    } else if (percentile <= 5) {
+      bg = `background-color: 'rgb(255, 102, 102)';`;
+    } else if (percentile <= 10) {
+      bg = `background-color: 'rgb(255, 117, 36)';`;
+    } else if (percentile <= 100) {
+      bg = `background-color: 'rgb(229, 172, 45)';`;
+    }
     progress = ` <span class="progress-container">
-<span class="progress-bar" style="width:${(1001 - percentile) / 10}%">&nbsp;</span>
+<span class="progress-bar" style="width:${(1001 - percentile) / 10}%; ${bg}">&nbsp;</span>
 </span>`;
   }
   let style = "";
@@ -201,7 +212,7 @@ let Semantle = (function () {
     try {
       similarityStory = await getSimilarityStory(puzzleNumber);
       $("#similarity-story").innerHTML = `
-            ${puzzleNumber}번째 정답 단어를 맞혀보세요.<br/>
+            ${puzzleNumber}회차 정답 단어를 맞혀보세요.<br/>
             정답 단어와 가장 유사한 단어의 유사도는 <b>${(similarityStory.top * 100).toFixed(2)}</b> 입니다.
             10번째로 유사한 단어의 유사도는 ${(similarityStory.top10 * 100).toFixed(2)}이고,
             1,000번째로 유사한 단어의 유사도는 ${(similarityStory.rest * 100).toFixed(2)} 입니다.`;
@@ -304,6 +315,7 @@ let Semantle = (function () {
       $("#dummy").focus(); // to fix ios buffer issue
       $("#guess").focus();
 
+      const alreadyExists = cache.hasOwnProperty(word);
       const guessData = await submitGuess(guess);
 
       if (guessData == null) {
@@ -353,9 +365,13 @@ let Semantle = (function () {
       });
 
       try {
-        $("#tries-label").innerHTML = `지금까지 사람들이 ${tries}번 추측했습니다. 유사도 최고기록은 ${(
-          currentMax * 100
-        ).toFixed(2)}% (${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`}) 입니다.`;
+        if (!alreadyExists) {
+          $("#tries-label").innerHTML = `지금까지 사람들이 <b>${tries}</b>번 추측했습니다. 유사도 최고기록은 ${(
+            currentMax * 100
+          ).toFixed(2)} ${
+            currentMax == 1 ? "" : `(${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`})`
+          } 입니다.`;
+        }
       } catch (err) {
         console.error(err);
       }
