@@ -13,10 +13,7 @@ from pytz import utc, timezone
 import threading
 import word2vec
 from process_similar import get_nearest
-
-import logging
-from logging.handlers import RotatingFileHandler
-
+from functools import wraps
 import asyncio
 import websockets
 import json
@@ -90,12 +87,12 @@ for offset in range(-2, 2):
     app.nearests[puzzle_number] = get_nearest(puzzle_number, secret_word, valid_nearest_words, valid_nearest_vecs)
 
 # Flask 앱 생성 후에 추가
-handler = RotatingFileHandler("app.log", maxBytes=10000, backupCount=3)
-handler.setLevel(logging.DEBUG)
-app.logger.addHandler(handler)
-app.logger.setLevel(logging.DEBUG)
 
-# @scheduler.scheduled_job(trigger=CronTrigger(hour=1, minute=0, timezone=KST))
+def async_action(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        return asyncio.run(f(*args, **kwargs))
+    return wrapped
 
 def next_stage(prev):
     print(f"scheduled stuff triggered: problem {prev + 1}")
@@ -160,7 +157,8 @@ def send_static(path):
 
 
 @app.route('/guess/<int:round>/<string:word>')
-def get_guess(round: int, word: str):
+@async_action
+async def get_guess(round: int, word: str):
     # print(app.secrets[round])
     global tries
     global current_max
@@ -172,7 +170,7 @@ def get_guess(round: int, word: str):
             return jsonify({"error": "calculating"}), 404
         tries += 1
     
-    broadcast("tries", tries)
+    await broadcast("tries", tries)
     
     correct = False
     if app.secrets[round].lower() == word.lower():
