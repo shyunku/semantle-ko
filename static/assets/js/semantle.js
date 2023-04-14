@@ -63,7 +63,7 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
   if (typeof percentile === "number") {
     closeClass = "close";
     percentileText = `<span class="percentile">${percentile}</span>&nbsp;`;
-    bg = "";
+    let bg = "";
     if (percentile == 1) {
       // rainbow gradient
       bg = `background-image: linear-gradient(90deg, rgb(16 255 0) 0%, rgb(255 205 22) 50%, rgb(255, 0, 0) 100%);`;
