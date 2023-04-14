@@ -97,7 +97,7 @@ function updateLastTime() {
   else if (diff < 60 * 60 * 24) color = `color: rgb(221, 81, 81)`;
   else color = `color: red`;
 
-  $("#current-proc-time").innerHTML = `현재 문제는 <span style="${color}">${text}</span> 동안 풀리지 않았습니다.`;
+  $("#current-proc-time").innerHTML = `<span style="${color}">${text}</span>`;
 }
 
 async function updateLatest() {
