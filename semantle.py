@@ -262,7 +262,7 @@ print("Server setup done.")
 # websocket
 connected_clients = set()
 
-def broadcast(type, data):
+async def broadcast(type, data):
     global connected_clients
     for client in connected_clients:
         client.send(json.dumps({
