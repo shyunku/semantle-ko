@@ -1,4 +1,5 @@
 import pickle
+from util import *
 from datetime import date, datetime
 
 from flask import (
@@ -23,6 +24,12 @@ KST = timezone('Asia/Seoul')
 
 def now():
     return datetime.now(utc).timestamp()
+
+async def concurrent_listing():
+    # iterate with 1 second delay
+    for i in range(1000):
+        list_threads()
+        await asyncio.sleep(1)
 
 NUM_SECRETS = 4650
 current_round = 12;
@@ -269,16 +276,3 @@ async def main():
         await asyncio.Future()  # 무한 루프를 방지합니다.
 
 asyncio.run(main())
-
-def list_threads():
-    for thread in threading.enumerate():
-        # write to file
-        log = f"{thread.name} (ID: {thread.ident})\n"
-        with open("threads.log", "a") as f:
-            f.write(log)
-
-async def concurrent_listing():
-    # iterate with 1 second delay
-    for i in range(1000):
-        list_threads()
-        await asyncio.sleep(1)
