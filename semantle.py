@@ -20,22 +20,22 @@ KST = timezone('Asia/Seoul')
 NUM_SECRETS = 4650
 scheduler = BackgroundScheduler()
 scheduler.start()
-current_round = 10;
+current_round = 12;
 calculating = False
 current_max = 0
 tries = 0
 
 def write_last():
     with open('last.dat', 'wb') as f:
-        # write just current round
-        pickle.dump(current_round, f)
+        # write 3 fields current round, current_max, tries
+        pickle.dump((current_round, current_max, tries), f)
 
 
 def read_last():
     global current_round
     try:
         with open('last.dat', 'rb') as f:
-            current_round = pickle.load(f)
+            current_round, current_max, tries = pickle.load(f)
     except FileNotFoundError:
         print("last.dat not found, starting from ~")
         # current_round = 0
