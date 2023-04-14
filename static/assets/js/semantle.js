@@ -143,7 +143,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const onHandlers = {};
   let pingThread = null;
 
-  $("socket-status").innerHTML = "연결중...";
+  $("#socket-status").innerHTML = "연결중...";
   const socket = new WebSocket("ws://43.200.219.71:3998");
 
   let sendSync = (type, data) => {
@@ -165,12 +165,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
   socket.onopen = function (e) {
     console.log("[open] Connection established");
-    $("socket-status").innerHTML = "연결됨";
+    $("#socket-status").innerHTML = "연결됨";
 
     pingThread = fastInterval(async () => {
       let data = await sendSync("ping", Date.now());
       const diff = Date.now() - data;
-      $("ping-status").innerHTML = `${diff}`;
+      $("#ping-status").innerHTML = `${diff}`;
     }, 1000);
   };
 
@@ -192,7 +192,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   socket.onclose = function (event) {
     clearInterval(pingThread);
-    $("socket-status").innerHTML = "연결 끊어짐";
+    $("#socket-status").innerHTML = "연결 끊어짐";
   };
 
   on("client_count", (data) => {
