@@ -64,7 +64,7 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
     closeClass = "close";
     percentileText = `<span class="percentile">${percentile}</span>&nbsp;`;
     let bg = "";
-    let logged = percentile > 1000 ? 0 : Math.log10(1001 - percentile);
+    let logged = percentile > 1000 ? 3 : Math.log10(percentile);
     if (percentile == 1) {
       // rainbow gradient
       bg = "one";
@@ -76,7 +76,7 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
       bg = "hundred";
     }
     progress = ` <span class="progress-container">
-<span class="progress-bar ${bg}" style="width:${(logged * 100) / 3}%;">&nbsp;</span>
+<span class="progress-bar ${bg}" style="width:${((3 - logged) * 100) / 3}%;">&nbsp;</span>
 </span>`;
   }
   let style = "";
