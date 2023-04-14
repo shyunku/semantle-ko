@@ -163,7 +163,7 @@ window.addEventListener("DOMContentLoaded", () => {
     socket.send("Hello Server!");
 
     pingThread = fastInterval(async () => {
-      let data = await socket.sendSync("ping", Date.now());
+      let data = await sendSync("ping", Date.now());
       console.log(data);
     }, 1000);
   };
