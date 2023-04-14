@@ -117,6 +117,19 @@ async function updateLatest() {
   }
 }
 
+function randomUUID() {
+  // Public Domain/MIT
+  var d = new Date().getTime();
+  if (typeof performance !== "undefined" && typeof performance.now === "function") {
+    d += performance.now(); //use high-precision timer if available
+  }
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    var r = (d + Math.random() * 16) % 16 | 0;
+    d = Math.floor(d / 16);
+    return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   // update with start time
   const f1 = fastInterval(() => {
@@ -126,11 +139,48 @@ window.addEventListener("DOMContentLoaded", () => {
     updateLatest();
   }, 1000);
 
+  const handlers = {};
+  let pingThread = null;
+
   const socket = new WebSocket("ws://43.200.219.71:3998");
+
+  let sendSync = (type, data) => {
+    if (!socket.OPEN) {
+      console.error("Socket is not open yet");
+      return;
+    }
+
+    const reqId = randomUUID();
+    return new Promise((resolve, reject) => {
+      handlers[reqId] = resolve;
+      socket.send(JSON.stringify({ type, data, reqId }));
+    });
+  };
+
   socket.onopen = function (e) {
     console.log("[open] Connection established");
     console.log("Sending to server");
     socket.send("Hello Server!");
+
+    pingThread = fastInterval(async () => {
+      let data = await socket.sendSync("ping", Date.now());
+      console.log(data);
+    }, 1000);
+  };
+
+  socket.onmessage = function (event) {
+    const { type, data, reqId } = JSON.parse(event.data);
+    console.debug(`[message] Data received from server: ${type} ${data}`);
+    if (handlers.hasOwnProperty(reqId)) {
+      handlers[reqId](data);
+      delete handlers[reqId];
+    } else {
+      console.error("No handler for request id", reqId);
+    }
+  };
+
+  socket.onclose = function (event) {
+    clearInterval(pingThread);
   };
 });
 

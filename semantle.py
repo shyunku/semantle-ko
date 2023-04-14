@@ -19,6 +19,7 @@ from logging.handlers import RotatingFileHandler
 
 import asyncio
 import websockets
+import json
 
 KST = timezone('Asia/Seoul')
 
@@ -263,10 +264,37 @@ async def echo(websocket, path):
     async for message in websocket:
         # 클라이언트로부터 메시지를 받았을 때의 처리 로직
         print(f"Received message: {message}")
+
+        # parse as json
+        try:
+            data = json.loads(message)
+        except json.JSONDecodeError:
+            print("Invalid json")
+            continue
+
+        # read json
+        if "type" not in data:
+            print("Invalid json")
+            continue
+        if "reqId" not in data:
+            print("Invalid json")
+            continue
+
+        reqId = data["reqId"]
+        type = data["type"]
+        if type == "ping":
+            res_data = now()
         
-        # 클라이언트로 메시지를 보냅니다.
-        response = f"Server received: {message}"
-        await websocket.send(response)
+        # create response with json
+        response = {
+            "type": type,
+            "reqId": reqId,
+            "data": res_data
+        }
+
+        response_json = json.dumps(response)
+        await websocket.send(response_json)
+
 
 async def start_server():
     server = await websockets.serve(echo, "0.0.0.0", 3998)
