@@ -153,10 +153,12 @@ def get_guess(round: int, word: str):
             return jsonify({"error": "calculating"}), 404
         tries += 1
     
+    correct = False
     if app.secrets[round].lower() == word.lower():
         word = app.secrets[round]
-        # correct
-        next_stage(round)
+        correct = True
+    elif current_max == 100:
+        current_max = 0
     rtn = {"guess": word}
 
     write_last()
@@ -194,6 +196,10 @@ def get_guess(round: int, word: str):
             rtn["max_rank"] = current_max_rank
         except KeyError:
             return jsonify({"error": "unknown"}), 404
+    
+    if correct:
+        next_stage(round)
+        
     return jsonify(rtn)
 
 
