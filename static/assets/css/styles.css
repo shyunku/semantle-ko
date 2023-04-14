@@ -255,6 +255,7 @@ button {
 }
 
 .problem-info .title {
+  display: inline-block;
   opacity: 0.6;
   min-width: 300px;
 }
