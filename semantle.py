@@ -22,6 +22,7 @@ scheduler = BackgroundScheduler()
 scheduler.start()
 current_round = 10;
 calculating = False
+current_max = 0
 tries = 0
 
 def write_last():
@@ -65,12 +66,14 @@ def update_nearest():
     global current_round
     global calculating
     global tries
+    global current_max
     if calculating:
         return
     
     calculating = True
     current_round += 1;
     tries = 0
+    current_max = 0
 
     write_last()
     next_puzzle = current_round % NUM_SECRETS
@@ -117,14 +120,29 @@ def get_guess(round: int, word: str):
     rtn = {"guess": word}
     # check most similar
     if round in app.nearests and word in app.nearests[round]:
-        rtn["sim"] = app.nearests[round][word][1]
-        rtn["rank"] = app.nearests[round][word][0]
+        similarity = app.nearests[round][word][1]
+        rank = app.nearests[round][word][0]
+
+        global current_max
+        if similarity > current_max:
+            current_max = similarity
+
+        rtn["sim"] = similarity
+        rtn["rank"] = rank
         rtn["tries"] = tries
+        rtn["max"] = current_max
     else:
         try:
-            rtn["sim"] = word2vec.similarity(app.secrets[round], word)
+            similarity = word2vec.similarity(app.secrets[round], word)
+            rtn["sim"] = similarity
             rtn["rank"] = "1000위 이상"
             rtn["tries"] = tries
+
+            global current_max
+            if similarity > current_max:
+                current_max = similarity
+
+            rtn["max"] = current_max
         except KeyError:
             return jsonify({"error": "unknown"}), 404
     return jsonify(rtn)
