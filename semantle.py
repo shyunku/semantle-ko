@@ -273,7 +273,7 @@ async def broadcast(type, data):
 async def echo(websocket, path):
     global connected_clients
     connected_clients.add(websocket)
-    broadcast("client_count", len(connected_clients))
+    await broadcast("client_count", len(connected_clients))
 
     try:
         async for message in websocket:
@@ -312,7 +312,7 @@ async def echo(websocket, path):
             await websocket.send(response_json)
     finally:
         connected_clients.remove(websocket)
-        broadcast("client_count", len(connected_clients))
+        await broadcast("client_count", len(connected_clients))
 
 
 async def start_server():
