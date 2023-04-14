@@ -66,7 +66,7 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
   let closeClass = "";
   let weird = false;
   if (similarity >= similarityStory.rest * 100 && percentile === "1000위 이상") {
-    if (enableNonDictionaryWordDisplay == false) return "";
+    if (enableNonDictionaryWordDisplay == false && guess == "") return "";
     percentileText =
       '<span class="weirdWord">????<span class="tooltiptext">이 단어는 사전에는 없지만, 데이터셋에 포함되어 있으며 1,000위 이내입니다.</span></span>';
     weird = true;
