@@ -56,150 +56,6 @@ function fastInterval(func, period) {
   return setInterval(func, period);
 }
 
-function applyMaxSimlarity(currentMax, currentMaxRank) {
-  let color;
-  if (currentMaxRank != -1) {
-    if (currentMaxRank <= 5) color = `color: rgb(221, 81, 81)`;
-    else if (currentMaxRank <= 10) color = `color: rgb(217, 189, 69)`;
-    else if (currentMaxRank <= 100) color = `color: rgb(92, 171, 85)`;
-    else color = `color: #00b5ef`;
-  }
-  $("#max-similarity").innerHTML = `<span style="font-weight: bold; ${color}">${(currentMax * 100).toFixed(2)}% ${
-    currentMax == 1 ? "" : `(${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`})`
-  }</span>`;
-}
-
-function applyTries(tries) {
-  $("#total-tries").innerHTML = `${tries}`;
-}
-
-function updateLastTime() {
-  if (startTime == null) return;
-  const diff = parseInt((Date.now() - startTime * 1000) / 1000);
-  if (diff < 0) return;
-  let text = "";
-  if (diff < 60) {
-    text = `${diff}초`;
-  } else if (diff < 3600) {
-    text = `${Math.floor(diff / 60)}분 ${diff % 60}초`;
-  } else if (diff < 86400) {
-    text = `${Math.floor(diff / 3600)}시간 ${Math.floor((diff % 3600) / 60)}분 ${diff % 60}초`;
-  } else {
-    text = `${Math.floor(diff / 86400)}일 ${Math.floor((diff % 86400) / 3600)}시간 ${Math.floor(
-      (diff % 3600) / 60
-    )}분 ${diff % 60}초`;
-  }
-
-  let color;
-  if (diff < 60 * 10) color = `color: #00b5ef`;
-  else if (diff < 60 * 30) color = `color: rgb(92, 171, 85)`;
-  else if (diff < 60 * 60 * 3) color = `color: rgb(217, 189, 69)`;
-  else if (diff < 60 * 60 * 24) color = `color: rgb(221, 81, 81)`;
-  else color = `color: red`;
-
-  $("#current-proc-time").innerHTML = `<span style="${color}">${text}</span>`;
-}
-
-function randomUUID() {
-  // Public Domain/MIT
-  var d = new Date().getTime();
-  if (typeof performance !== "undefined" && typeof performance.now === "function") {
-    d += performance.now(); //use high-precision timer if available
-  }
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-    var r = (d + Math.random() * 16) % 16 | 0;
-    d = Math.floor(d / 16);
-    return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
-  });
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  // update with start time
-  const f1 = fastInterval(() => {
-    updateLastTime();
-  }, 1000);
-
-  const handlers = {};
-  const onHandlers = {};
-  let pingThread = null;
-
-  $("#socket-status").innerHTML = "연결중...";
-  const socket = new WebSocket("ws://43.200.219.71:3998");
-
-  let sendSync = (type, data) => {
-    if (!socket.OPEN) {
-      console.error("Socket is not open yet");
-      return;
-    }
-
-    const reqId = randomUUID();
-    return new Promise((resolve, reject) => {
-      handlers[reqId] = resolve;
-      socket.send(JSON.stringify({ type, data, reqId }));
-    });
-  };
-
-  let on = (type, handler) => {
-    onHandlers[type] = handler;
-  };
-
-  socket.onopen = function (e) {
-    console.log("[open] Connection established");
-    $("#socket-status").innerHTML = "연결됨";
-
-    pingThread = fastInterval(async () => {
-      let data = await sendSync("ping", Date.now());
-      const diff = Date.now() - data;
-      $("#ping-status").innerHTML = `${diff}`;
-    }, 1000);
-
-    (async () => {
-      let currentTries = await sendSync("tries");
-      applyTries(currentTries);
-    })();
-
-    (async () => {
-      let maxSimRank = await sendSync("maxSimRank");
-      applyMaxSimlarity(maxSimRank.max, maxSimRank.max_rank);
-    })();
-  };
-
-  socket.onmessage = function (event) {
-    const raw = JSON.parse(event.data);
-    const { type, data } = raw;
-    const reqId = raw.reqId ?? null;
-
-    console.debug(`[message] Data received from server: ${type} ${data}`);
-    if (handlers.hasOwnProperty(reqId)) {
-      handlers[reqId](data);
-      delete handlers[reqId];
-    } else if (reqId == null && onHandlers.hasOwnProperty(type)) {
-      onHandlers[type](data);
-    } else {
-      console.error("No handler for request id", reqId);
-    }
-  };
-
-  socket.onclose = function (event) {
-    console.log("[close] Connection closed");
-    clearInterval(pingThread);
-    $("#socket-status").innerHTML = "연결 끊어짐";
-  };
-
-  on("client_count", (data) => {
-    $("#current-user-counts").innerHTML = data ?? 0;
-  });
-
-  on("tries", (data) => {
-    applyTries(data);
-  });
-
-  on("maxSimRank", (data) => {
-    console.log(data);
-    applyMaxSimlarity(data.max, data.max_rank);
-  });
-});
-
 function mlog(base, x) {
   return Math.log(x) / Math.log(base);
 }
@@ -210,6 +66,7 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
   let closeClass = "";
   let weird = false;
   if (similarity >= similarityStory.rest * 100 && percentile === "1000위 이상") {
+    if (enableNonDictionaryWordDisplay == false) return "";
     percentileText =
       '<span class="weirdWord">????<span class="tooltiptext">이 단어는 사전에는 없지만, 데이터셋에 포함되어 있으며 1,000위 이내입니다.</span></span>';
     weird = true;
@@ -739,6 +596,162 @@ let Semantle = (function () {
       saveGame(guesses.length, won ? 1 : 0);
     }
   }
+
+  function applyMaxSimlarity(currentMax, currentMaxRank) {
+    let color;
+    if (currentMaxRank != -1) {
+      if (currentMaxRank <= 5) color = `color: rgb(221, 81, 81)`;
+      else if (currentMaxRank <= 10) color = `color: rgb(217, 189, 69)`;
+      else if (currentMaxRank <= 100) color = `color: rgb(92, 171, 85)`;
+      else color = `color: #00b5ef`;
+    }
+    $("#max-similarity").innerHTML = `<span style="font-weight: bold; ${color}">${(currentMax * 100).toFixed(2)}% ${
+      currentMax == 1 ? "" : `(${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`})`
+    }</span>`;
+  }
+
+  function applyTries(tries) {
+    $("#total-tries").innerHTML = `${tries}`;
+  }
+
+  function applyEnableNonDictionaryWordDisplay(enable) {
+    localStorage.setItem("enableNonDictionaryWordDisplay", enable);
+    $("#enable-non-dictionary-word-display").checked = enable;
+    updateGuesses("");
+  }
+
+  function updateLastTime() {
+    if (startTime == null) return;
+    const diff = parseInt((Date.now() - startTime * 1000) / 1000);
+    if (diff < 0) return;
+    let text = "";
+    if (diff < 60) {
+      text = `${diff}초`;
+    } else if (diff < 3600) {
+      text = `${Math.floor(diff / 60)}분 ${diff % 60}초`;
+    } else if (diff < 86400) {
+      text = `${Math.floor(diff / 3600)}시간 ${Math.floor((diff % 3600) / 60)}분 ${diff % 60}초`;
+    } else {
+      text = `${Math.floor(diff / 86400)}일 ${Math.floor((diff % 86400) / 3600)}시간 ${Math.floor(
+        (diff % 3600) / 60
+      )}분 ${diff % 60}초`;
+    }
+
+    let color;
+    if (diff < 60 * 10) color = `color: #00b5ef`;
+    else if (diff < 60 * 30) color = `color: rgb(92, 171, 85)`;
+    else if (diff < 60 * 60 * 3) color = `color: rgb(217, 189, 69)`;
+    else if (diff < 60 * 60 * 24) color = `color: rgb(221, 81, 81)`;
+    else color = `color: red`;
+
+    $("#current-proc-time").innerHTML = `<span style="${color}">${text}</span>`;
+  }
+
+  function randomUUID() {
+    // Public Domain/MIT
+    var d = new Date().getTime();
+    if (typeof performance !== "undefined" && typeof performance.now === "function") {
+      d += performance.now(); //use high-precision timer if available
+    }
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      var r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
+    });
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    // update with start time
+    const f1 = fastInterval(() => {
+      updateLastTime();
+    }, 1000);
+
+    applyEnableNonDictionaryWordDisplay(enableNonDictionaryWordDisplay);
+
+    $("#enable-non-dictionary-word-display").addEventListener("change", (e) => {
+      applyEnableNonDictionaryWordDisplay(e.target.checked);
+    });
+
+    const handlers = {};
+    const onHandlers = {};
+    let pingThread = null;
+
+    $("#socket-status").innerHTML = "연결중...";
+    const socket = new WebSocket("ws://43.200.219.71:3998");
+
+    let sendSync = (type, data) => {
+      if (!socket.OPEN) {
+        console.error("Socket is not open yet");
+        return;
+      }
+
+      const reqId = randomUUID();
+      return new Promise((resolve, reject) => {
+        handlers[reqId] = resolve;
+        socket.send(JSON.stringify({ type, data, reqId }));
+      });
+    };
+
+    let on = (type, handler) => {
+      onHandlers[type] = handler;
+    };
+
+    socket.onopen = function (e) {
+      console.log("[open] Connection established");
+      $("#socket-status").innerHTML = "연결됨";
+
+      pingThread = fastInterval(async () => {
+        let data = await sendSync("ping", Date.now());
+        const diff = Date.now() - data;
+        $("#ping-status").innerHTML = `${diff}`;
+      }, 1000);
+
+      (async () => {
+        let currentTries = await sendSync("tries");
+        applyTries(currentTries);
+      })();
+
+      (async () => {
+        let maxSimRank = await sendSync("maxSimRank");
+        applyMaxSimlarity(maxSimRank.max, maxSimRank.max_rank);
+      })();
+    };
+
+    socket.onmessage = function (event) {
+      const raw = JSON.parse(event.data);
+      const { type, data } = raw;
+      const reqId = raw.reqId ?? null;
+
+      console.debug(`[message] Data received from server: ${type} ${data}`);
+      if (handlers.hasOwnProperty(reqId)) {
+        handlers[reqId](data);
+        delete handlers[reqId];
+      } else if (reqId == null && onHandlers.hasOwnProperty(type)) {
+        onHandlers[type](data);
+      } else {
+        console.error("No handler for request id", reqId);
+      }
+    };
+
+    socket.onclose = function (event) {
+      console.log("[close] Connection closed");
+      clearInterval(pingThread);
+      $("#socket-status").innerHTML = "연결 끊어짐";
+    };
+
+    on("client_count", (data) => {
+      $("#current-user-counts").innerHTML = data ?? 0;
+    });
+
+    on("tries", (data) => {
+      applyTries(data);
+    });
+
+    on("maxSimRank", (data) => {
+      console.log(data);
+      applyMaxSimlarity(data.max, data.max_rank);
+    });
+  });
 
   return {
     init: init,

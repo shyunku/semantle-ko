@@ -270,6 +270,15 @@ button {
   font-weight: bold;
 }
 
+.switch_except {
+  display: flex;
+  align-items: center;
+}
+
+.switch_except label {
+  margin-left: 5px;
+}
+
 .percentile,
 .progress-container,
 .progress-bar {
