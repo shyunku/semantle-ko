@@ -25,7 +25,7 @@ input {
   font-size: 17px;
   line-height: 1.59;
   -webkit-font-smoothing: subpixel-antialiased;
-  font-family: 'Pretendard', -apple-system-font, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-family: "Pretendard", -apple-system-font, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
   text-rendering: optimizeLegibility;
   font-weight: 400;
 }
@@ -87,14 +87,14 @@ h2 {
 
 input[type="button"] {
   color: black;
-  padding: .5em;
+  padding: 0.5em;
   border: 1px solid #666666;
   border-radius: 0.2em;
 }
 
 #menu {
   display: flex;
-  column-gap: .5em;
+  column-gap: 0.5em;
 }
 
 #menu .dialog-close {
@@ -122,7 +122,7 @@ input[type="button"] {
 }
 
 .dialog-underlay {
-  background: rgba(0, 0, 0, .5);
+  background: rgba(0, 0, 0, 0.5);
   bottom: 0;
   display: none;
   left: 0;
@@ -144,7 +144,7 @@ input[type="button"] {
   right: 2em;
   top: 2em;
   z-index: 1;
-  border-radius: .5em;
+  border-radius: 0.5em;
 }
 
 .dialog-close {
@@ -156,8 +156,8 @@ input[type="button"] {
   font-size: 2em;
   height: 1em;
   line-height: 1em;
-  right: .5em;
-  top: .5em;
+  right: 0.5em;
+  top: 0.5em;
   width: 1em;
   z-index: 2;
 }
@@ -176,11 +176,11 @@ input[type="button"] {
   overflow: auto;
 }
 
-.dialog-content>*:first-child {
+.dialog-content > *:first-child {
   margin-top: 0;
 }
 
-.dialog-content>*:last-child {
+.dialog-content > *:last-child {
   margin-bottom: 0;
 }
 
@@ -192,7 +192,7 @@ input[type="button"] {
 
 #guess-wrapper input,
 #give-up-btn {
-  padding: .5em;
+  padding: 0.5em;
   border: 1px solid #666666;
   border-radius: 0.2em;
 }
@@ -246,7 +246,7 @@ button {
   background-color: #eeeeff;
 }
 
-.gaveup>*:first-child {
+.gaveup > *:first-child {
   margin-top: 0;
 }
 
@@ -272,6 +272,22 @@ button {
 
 .progress-bar {
   background-color: #00b5ef;
+}
+
+.progress-bar.hundred {
+  background-color: "rgb(229, 172, 45)";
+}
+
+.progress-bar.ten {
+  background-color: "rgb(255, 117, 36)";
+}
+
+.progress-bar.five {
+  background-color: "rgb(255, 102, 102)";
+}
+
+.progress-bar.one {
+  background-image: linear-gradient(90deg, rgb(16 255 0) 0%, rgb(255 205 22) 50%, rgb(255, 0, 0) 100%);
 }
 
 .weirdWord {
@@ -332,7 +348,6 @@ footer {
 }
 
 @media only screen and (max-width: 640px) {
-
   body,
   input {
     font-size: 14px;
@@ -343,7 +358,7 @@ footer {
   }
 
   th {
-    padding-right: .5em;
+    padding-right: 0.5em;
   }
 
   .progress-container {

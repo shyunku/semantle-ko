@@ -66,16 +66,16 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
     let bg = "";
     if (percentile == 1) {
       // rainbow gradient
-      bg = `background-image: linear-gradient(90deg, rgb(16 255 0) 0%, rgb(255 205 22) 50%, rgb(255, 0, 0) 100%);`;
+      bg = "one";
     } else if (percentile <= 5) {
-      bg = `background-color: 'rgb(255, 102, 102)';`;
+      bg = "five";
     } else if (percentile <= 10) {
-      bg = `background-color: 'rgb(255, 117, 36)';`;
+      bg = "ten";
     } else if (percentile <= 100) {
-      bg = `background-color: 'rgb(229, 172, 45)';`;
+      bg = "hundred";
     }
     progress = ` <span class="progress-container">
-<span class="progress-bar" style="width:${(1001 - percentile) / 10}%; ${bg}">&nbsp;</span>
+<span class="progress-bar ${bg}" style="width:${(1001 - percentile) / 10}%;">&nbsp;</span>
 </span>`;
   }
   let style = "";
