@@ -100,23 +100,6 @@ function updateLastTime() {
   $("#current-proc-time").innerHTML = `<span style="${color}">${text}</span>`;
 }
 
-async function updateLatest() {
-  const url = "/fetch-updated";
-  const response = await fetch(url);
-  try {
-    let res = await response.json();
-    const { max, max_rank, round } = res;
-    applyMaxSimlarity(max, max_rank);
-    if (round > puzzleNumber) {
-      $(
-        "done-msg"
-      ).innerHTML = `<span style="font-weight: bold; color: red;">누군가 이번 문제를 맞춰 새로 업데이트되었습니다. 새로고침을 눌러주세요!</span>`;
-    }
-  } catch (e) {
-    return null;
-  }
-}
-
 function randomUUID() {
   // Public Domain/MIT
   var d = new Date().getTime();
@@ -134,9 +117,6 @@ window.addEventListener("DOMContentLoaded", () => {
   // update with start time
   const f1 = fastInterval(() => {
     updateLastTime();
-  }, 1000);
-  const f2 = fastInterval(() => {
-    updateLatest();
   }, 1000);
 
   const handlers = {};
@@ -177,6 +157,11 @@ window.addEventListener("DOMContentLoaded", () => {
       let currentTries = await sendSync("tries");
       applyTries(currentTries);
     })();
+
+    (async () => {
+      let maxSimRank = await sendSync("maxSimRank");
+      applyMaxSimlarity(maxSimRank.max, maxSimRank.max_rank);
+    })();
   };
 
   socket.onmessage = function (event) {
@@ -207,6 +192,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
   on("tries", (data) => {
     applyTries(data);
+  });
+
+  on("maxSimRank", (data) => {
+    console.log(data);
+    applyMaxSimlarity(data.max, data.max_rank);
   });
 });
 

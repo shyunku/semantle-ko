@@ -215,6 +215,11 @@ async def get_guess(round: int, word: str):
         except KeyError:
             return jsonify({"error": "unknown"}), 404
     
+    await broadcast("maxSimRank", {
+        "max": current_max,
+        "max_rank": current_max_rank
+    })
+    
     if correct:
         next_stage(round)
         
@@ -306,6 +311,11 @@ async def echo(websocket, path):
                 res_data = req_data
             elif type == "tries":
                 res_data = tries
+            elif type == "maxSimRank":
+                res_data = {
+                    "max": current_max,
+                    "max_rank": current_max_rank
+                }
             
             # create response with json
             response = {
