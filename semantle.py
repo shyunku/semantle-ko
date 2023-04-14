@@ -155,7 +155,7 @@ def get_guess(round: int, word: str):
                 current_max = similarity
 
             rtn["max"] = current_max
-            rtn["max_rank"] = -1
+            rtn["max_rank"] = current_max_rank
         except KeyError:
             return jsonify({"error": "unknown"}), 404
     return jsonify(rtn)
