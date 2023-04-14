@@ -161,6 +161,8 @@ def get_guess(round: int, word: str):
         current_max = 0
     rtn = {"guess": word}
 
+    print(current_max)
+
     write_last()
 
     # check most similar
