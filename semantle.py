@@ -1,8 +1,6 @@
 import pickle
 from datetime import date, datetime
 
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
 from flask import (
     Flask,
     send_file,
@@ -11,20 +9,20 @@ from flask import (
     render_template
 )
 from pytz import utc, timezone
-
+import threading
 import word2vec
 from process_similar import get_nearest
 
 KST = timezone('Asia/Seoul')
 
 NUM_SECRETS = 4650
-scheduler = BackgroundScheduler()
-scheduler.start()
 current_round = 12;
 calculating = False
 current_max = 0
 current_max_rank = -1
 tries = 0
+
+lock = threading.Lock()
 
 def write_last():
     with open('last.dat', 'wb') as f:
@@ -65,23 +63,25 @@ for offset in range(-2, 2):
 
 
 # @scheduler.scheduled_job(trigger=CronTrigger(hour=1, minute=0, timezone=KST))
-def update_nearest():
+
+def next_stage(prev):
     print("scheduled stuff triggered!")
     global current_round
     global calculating
     global tries
     global current_max
     global current_max_rank
-    if calculating:
-        return
     
-    calculating = True
-    current_round += 1;
-    tries = 0
-    current_max = 0
-    current_max_rank = -1
-
-    write_last()
+    with lock:
+        if calculating:
+            return
+        calculating = True
+        current_round = prev + 1
+        tries = 0
+        current_max = 0
+        current_max_rank = -1
+        write_last()
+    
     next_puzzle = current_round % NUM_SECRETS
     next_word = secrets[next_puzzle]
     to_delete = (next_puzzle - 4) % NUM_SECRETS
@@ -91,7 +91,13 @@ def update_nearest():
         del app.nearests[to_delete]
     app.secrets[next_puzzle] = next_word
     app.nearests[next_puzzle] = get_nearest(next_puzzle, next_word, valid_nearest_words, valid_nearest_vecs)
-    calculating = False
+
+    with lock:
+        calculating = False
+
+
+def update_nearest():
+    next_stage(current_round)
 
 
 @app.route('/')
@@ -120,12 +126,17 @@ def get_guess(round: int, word: str):
     global tries
     global current_max
     global current_max_rank
+    global calculating
+
+    with lock:
+        if calculating:
+            return jsonify({"error": "calculating"}), 404
+        tries += 1
     
-    tries += 1
     if app.secrets[round].lower() == word.lower():
         word = app.secrets[round]
         # correct
-        update_nearest()
+        next_stage(round)
     rtn = {"guess": word}
 
     write_last()
@@ -135,9 +146,10 @@ def get_guess(round: int, word: str):
         similarity = app.nearests[round][word][1]
         rank = app.nearests[round][word][0]
 
-        if similarity > current_max:
-            current_max = similarity
-            current_max_rank = rank
+        with lock:
+            if similarity > current_max:
+                current_max = similarity
+                current_max_rank = rank
 
         rtn["sim"] = similarity
         rtn["rank"] = rank
@@ -151,8 +163,9 @@ def get_guess(round: int, word: str):
             rtn["rank"] = "1000위 이상"
             rtn["tries"] = tries
 
-            if similarity > current_max:
-                current_max = similarity
+            with lock:
+                if similarity > current_max:
+                    current_max = similarity
 
             rtn["max"] = current_max
             rtn["max_rank"] = current_max_rank

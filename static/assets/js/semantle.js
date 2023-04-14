@@ -54,9 +54,11 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
   let percentileText = percentile;
   let progress = "";
   let closeClass = "";
+  let weird = false;
   if (similarity >= similarityStory.rest * 100 && percentile === "1000위 이상") {
     percentileText =
       '<span class="weirdWord">????<span class="tooltiptext">이 단어는 사전에는 없지만, 데이터셋에 포함되어 있으며 1,000위 이내입니다.</span></span>';
+    weird = true;
   }
   if (typeof percentile === "number") {
     closeClass = "close";
@@ -69,7 +71,9 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
   if (oldGuess === guess) {
     style = 'style="color: #f7617a;font-weight: 600;"';
   }
-  return `<tr><td>${guessNumber}</td><td ${style}>${oldGuess}</td><td>${similarity.toFixed(
+  return `<tr${
+    weird ? ' style="opacity: 0.5;"' : ""
+  }><td>${guessNumber}</td><td ${style}>${oldGuess}</td><td>${similarity.toFixed(
     2
   )}</td><td class="${closeClass}">${percentileText}${progress}
 </td></tr>`;
@@ -197,7 +201,7 @@ let Semantle = (function () {
     try {
       similarityStory = await getSimilarityStory(puzzleNumber);
       $("#similarity-story").innerHTML = `
-            ${puzzleNumber}번째 꼬맨틀의 정답 단어를 맞혀보세요.<br/>
+            ${puzzleNumber}번째 정답 단어를 맞혀보세요.<br/>
             정답 단어와 가장 유사한 단어의 유사도는 <b>${(similarityStory.top * 100).toFixed(2)}</b> 입니다.
             10번째로 유사한 단어의 유사도는 ${(similarityStory.top10 * 100).toFixed(2)}이고,
             1,000번째로 유사한 단어의 유사도는 ${(similarityStory.rest * 100).toFixed(2)} 입니다.`;
@@ -308,6 +312,10 @@ let Semantle = (function () {
       }
       if (guessData.error == "unknown") {
         $("#error").textContent = `${guess}은(는) 알 수 없는 단어입니다.`;
+        return false;
+      }
+      if (guessData.error == "calculating") {
+        $("#error").textContent = `다음 문제를 준비하는 중입니다. 잠시 후 다시 시도해보세요.`;
         return false;
       }
 
