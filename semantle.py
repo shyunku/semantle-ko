@@ -282,8 +282,9 @@ async def echo(websocket, path):
 
         reqId = data["reqId"]
         type = data["type"]
+        req_data = data["data"]
         if type == "ping":
-            res_data = now()
+            res_data = req_data
         
         # create response with json
         response = {

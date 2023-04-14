@@ -164,7 +164,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     pingThread = fastInterval(async () => {
       let data = await sendSync("ping", Date.now());
-      console.log(data);
+      const diff = Date.now() - data;
+      console.log(diff);
     }, 1000);
   };
 
