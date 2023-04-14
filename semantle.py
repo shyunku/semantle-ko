@@ -157,7 +157,7 @@ def get_guess(round: int, word: str):
     if app.secrets[round].lower() == word.lower():
         word = app.secrets[round]
         correct = True
-    elif current_max == 100:
+    elif current_max == 1:
         current_max = 0
     rtn = {"guess": word}
 
@@ -173,7 +173,7 @@ def get_guess(round: int, word: str):
         with lock:
             if similarity > current_max:
                 current_max = similarity
-                if current_max == 100:
+                if current_max == 1:
                     current_max_rank = 0
                 else:
                     current_max_rank = rank
