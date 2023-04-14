@@ -260,41 +260,63 @@ def give_up(round: int):
 print("Server setup done.")
 
 # websocket
+connected_clients = set()
+websocket_lock = asyncio.Lock()
+
+def broadcast(type, data):
+    global connected_clients
+    with websocket_lock:
+        for client in connected_clients:
+            client.send(json.dumps({
+                "type": type,
+                "data": data
+            }))
+
 async def echo(websocket, path):
-    async for message in websocket:
-        # 클라이언트로부터 메시지를 받았을 때의 처리 로직
-        # print(f"Received message: {message}")
+    global connected_clients
+    with websocket_lock:
+        connected_clients.add(websocket)
+        broadcast("client_count", len(connected_clients))
 
-        # parse as json
-        try:
-            data = json.loads(message)
-        except json.JSONDecodeError:
-            print("Invalid json")
-            continue
+    try:
+        async for message in websocket:
+            # 클라이언트로부터 메시지를 받았을 때의 처리 로직
+            # print(f"Received message: {message}")
 
-        # read json
-        if "type" not in data:
-            print("Invalid json")
-            continue
-        if "reqId" not in data:
-            print("Invalid json")
-            continue
+            # parse as json
+            try:
+                data = json.loads(message)
+            except json.JSONDecodeError:
+                print("Invalid json")
+                continue
 
-        reqId = data["reqId"]
-        type = data["type"]
-        req_data = data["data"]
-        if type == "ping":
-            res_data = req_data
-        
-        # create response with json
-        response = {
-            "type": type,
-            "reqId": reqId,
-            "data": res_data
-        }
+            # read json
+            if "type" not in data:
+                print("Invalid json")
+                continue
+            if "reqId" not in data:
+                print("Invalid json")
+                continue
 
-        response_json = json.dumps(response)
-        await websocket.send(response_json)
+            reqId = data["reqId"]
+            type = data["type"]
+            req_data = data["data"]
+            if type == "ping":
+                res_data = req_data
+            
+            # create response with json
+            response = {
+                "type": type,
+                "reqId": reqId,
+                "data": res_data
+            }
+
+            response_json = json.dumps(response)
+            await websocket.send(response_json)
+    finally:
+        with websocket_lock:
+            connected_clients.remove(websocket)
+            broadcast("client_count", len(connected_clients))
 
 
 async def start_server():

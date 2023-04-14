@@ -140,8 +140,10 @@ window.addEventListener("DOMContentLoaded", () => {
   }, 1000);
 
   const handlers = {};
+  const onHandlers = {};
   let pingThread = null;
 
+  $("socket-status").innerHTML = "연결중...";
   const socket = new WebSocket("ws://43.200.219.71:3998");
 
   let sendSync = (type, data) => {
@@ -157,24 +159,32 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   };
 
+  let on = (type, handler) => {
+    onHandlers[type] = handler;
+  };
+
   socket.onopen = function (e) {
     console.log("[open] Connection established");
-    console.log("Sending to server");
-    socket.send("Hello Server!");
+    $("socket-status").innerHTML = "연결됨";
 
     pingThread = fastInterval(async () => {
       let data = await sendSync("ping", Date.now());
       const diff = Date.now() - data;
-      console.log(diff);
+      $("ping-status").innerHTML = `${diff}`;
     }, 1000);
   };
 
   socket.onmessage = function (event) {
-    const { type, data, reqId } = JSON.parse(event.data);
+    const raw = JSON.parse(event.data);
+    const { type, data } = raw;
+    const reqId = raw.reqId ?? null;
+
     console.debug(`[message] Data received from server: ${type} ${data}`);
     if (handlers.hasOwnProperty(reqId)) {
       handlers[reqId](data);
       delete handlers[reqId];
+    } else if (reqId == null && onHandlers.hasOwnProperty(type)) {
+      onHandlers[type](data);
     } else {
       console.error("No handler for request id", reqId);
     }
@@ -182,7 +192,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
   socket.onclose = function (event) {
     clearInterval(pingThread);
+    $("socket-status").innerHTML = "연결 끊어짐";
   };
+
+  on("client_count", (data) => {
+    console.log(data);
+  });
 });
 
 function mlog(base, x) {
