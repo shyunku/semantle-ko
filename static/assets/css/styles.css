@@ -273,7 +273,7 @@ button {
 .switch_except {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .switch_except label {

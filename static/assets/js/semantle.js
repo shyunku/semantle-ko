@@ -618,6 +618,7 @@ let Semantle = (function () {
   function applyEnableNonDictionaryWordDisplay(enable) {
     localStorage.setItem("enableNonDictionaryWordDisplay", enable);
     $("#enable-non-dictionary-word-display").checked = enable;
+    enableNonDictionaryWordDisplay = enable;
     updateGuesses("");
   }
 
