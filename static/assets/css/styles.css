@@ -255,8 +255,8 @@ button {
 }
 
 .problem-info .title {
-  color: rgb(52, 52, 52);
-  min-width: 200px;
+  opacity: 0.6;
+  min-width: 300px;
 }
 
 .percentile,
