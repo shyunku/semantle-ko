@@ -264,6 +264,10 @@ button {
   min-width: 300px;
 }
 
+.problem-info .value {
+  font-weight: bold;
+}
+
 .percentile,
 .progress-container,
 .progress-bar {

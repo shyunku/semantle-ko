@@ -367,9 +367,11 @@ let Semantle = (function () {
       similarityStory = await getSimilarityStory(puzzleNumber);
       $("#similarity-story").innerHTML = `
             ${puzzleNumber}회차 정답 단어를 맞혀보세요.<br/>
-            정답 단어와 가장 유사한 단어의 유사도는 <b>${(similarityStory.top * 100).toFixed(2)}</b> 입니다.
-            10번째로 유사한 단어의 유사도는 ${(similarityStory.top10 * 100).toFixed(2)}이고,
-            1,000번째로 유사한 단어의 유사도는 ${(similarityStory.rest * 100).toFixed(2)} 입니다.`;
+            정답 단어와 가장 유사한 단어의 유사도는 <span style="color: rgb(221, 81, 81);"><b>${(
+              similarityStory.top * 100
+            ).toFixed(2)}%</b></span> 입니다.<br/>
+            10번째로 유사한 단어의 유사도는 ${(similarityStory.top10 * 100).toFixed(2)}%이고,<br/>
+            1,000번째로 유사한 단어의 유사도는 ${(similarityStory.rest * 100).toFixed(2)}% 입니다.`;
     } catch {
       // we can live without this in the event that something is broken
     }
