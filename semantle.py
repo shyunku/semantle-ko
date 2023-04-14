@@ -45,6 +45,7 @@ def write_last():
     with open('last.dat', 'wb') as f:
         # write 3 fields current round, current_max, tries
         pickle.dump((current_round, current_max, current_max_rank, tries, last_time), f)
+        print("dump write done")
 
 
 def read_last():

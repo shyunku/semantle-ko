@@ -1,6 +1,7 @@
 FROM python:3.9-slim
 
 ENV FLASK_APP=semantle
+ENV PYTHONUNBUFFERED=1
 
 RUN mkdir /app
 WORKDIR /app
