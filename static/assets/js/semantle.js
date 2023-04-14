@@ -65,7 +65,7 @@ function applyTries(currentMax, currentMaxRank, tries) {
     else currentMaxRank = `color: #00b5ef`;
   }
   $("#total-tries").innerHTML = `${tries}`;
-  $("#max-similarity").innerHTML = `<span style="font-weight: bold; ${color}">${(currentMax * 100).toFixed(2)} ${
+  $("#max-similarity").innerHTML = `<span style="font-weight: bold; ${color}">${(currentMax * 100).toFixed(2)}% ${
     currentMax == 1 ? "" : `(${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`})`
   }</span>`;
 }
@@ -240,7 +240,7 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
     weird ? ' style="opacity: 0.5;"' : ""
   }><td>${guessNumber}</td><td ${style}>${oldGuess}</td><td>${similarity.toFixed(
     2
-  )}</td><td class="${closeClass}">${percentileText}${progress}
+  )}%</td><td class="${closeClass}">${percentileText}${progress}
 </td></tr>`;
 }
 
