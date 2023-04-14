@@ -197,7 +197,7 @@ window.addEventListener("DOMContentLoaded", () => {
   };
 
   on("client_count", (data) => {
-    console.log(data);
+    $("#current-user-counts").innerHTML = data ?? 0;
   });
 });
 
