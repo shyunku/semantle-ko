@@ -191,6 +191,7 @@ window.addEventListener("DOMContentLoaded", () => {
   };
 
   socket.onclose = function (event) {
+    console.log("[close] Connection closed");
     clearInterval(pingThread);
     $("#socket-status").innerHTML = "연결 끊어짐";
   };

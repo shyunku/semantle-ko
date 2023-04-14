@@ -261,7 +261,7 @@ print("Server setup done.")
 
 # websocket
 connected_clients = set()
-websocket_lock = asyncio.Lock()
+websocket_lock = threading.Lock()
 
 def broadcast(type, data):
     global connected_clients
