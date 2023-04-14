@@ -126,7 +126,7 @@ window.addEventListener("DOMContentLoaded", () => {
     updateLatest();
   }, 1500);
 
-  const socket = new WebSocket("ws://localhost:3998");
+  const socket = new WebSocket("ws://43.200.219.71:3998");
 });
 
 function mlog(base, x) {
