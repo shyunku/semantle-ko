@@ -269,3 +269,13 @@ async def main():
         await asyncio.Future()  # 무한 루프를 방지합니다.
 
 asyncio.run(main())
+
+def list_threads():
+    for thread in threading.enumerate():
+        print(f"{thread.name} (ID: {thread.ident})")
+
+async def concurrent_listing():
+    # iterate with 1 second delay
+    for i in range(1000):
+        list_threads()
+        await asyncio.sleep(1)
