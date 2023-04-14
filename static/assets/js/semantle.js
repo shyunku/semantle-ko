@@ -56,18 +56,21 @@ function fastInterval(func, period) {
   return setInterval(func, period);
 }
 
-function applyTries(currentMax, currentMaxRank, tries) {
+function applyMaxSimlarity(currentMax, currentMaxRank) {
   let color;
   if (currentMaxRank != -1) {
     if (currentMaxRank <= 5) color = `color: rgb(221, 81, 81)`;
     else if (currentMaxRank <= 10) color = `color: rgb(217, 189, 69)`;
     else if (currentMaxRank <= 100) color = `color: rgb(92, 171, 85)`;
-    else currentMaxRank = `color: #00b5ef`;
+    else color = `color: #00b5ef`;
   }
-  $("#total-tries").innerHTML = `${tries}`;
   $("#max-similarity").innerHTML = `<span style="font-weight: bold; ${color}">${(currentMax * 100).toFixed(2)}% ${
     currentMax == 1 ? "" : `(${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`})`
   }</span>`;
+}
+
+function applyTries(tries) {
+  $("#total-tries").innerHTML = `${tries}`;
 }
 
 function updateLastTime() {
@@ -102,8 +105,8 @@ async function updateLatest() {
   const response = await fetch(url);
   try {
     let res = await response.json();
-    const { max, max_rank, round, tries } = res;
-    applyTries(max, max_rank, tries);
+    const { max, max_rank, round } = res;
+    applyMaxSimlarity(max, max_rank);
     if (round > puzzleNumber) {
       $(
         "done-msg"
@@ -169,6 +172,11 @@ window.addEventListener("DOMContentLoaded", () => {
       const diff = Date.now() - data;
       $("#ping-status").innerHTML = `${diff}`;
     }, 1000);
+
+    (async () => {
+      let currentTries = await sendSync("tries");
+      applyTries(currentTries);
+    })();
   };
 
   socket.onmessage = function (event) {
@@ -195,6 +203,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
   on("client_count", (data) => {
     $("#current-user-counts").innerHTML = data ?? 0;
+  });
+
+  on("tries", (data) => {
+    applyTries(data);
   });
 });
 
@@ -492,7 +504,6 @@ let Semantle = (function () {
 
       let percentile = guessData.rank;
       let similarity = guessData.sim * 100.0;
-      let tries = guessData.tries ?? 0;
       let currentMax = guessData.max ?? 0;
       let currentMaxRank = guessData.max_rank ?? -1;
       if (!guessed.has(guess)) {
@@ -522,7 +533,7 @@ let Semantle = (function () {
 
       try {
         if (!alreadyExists) {
-          applyTries(currentMax, currentMaxRank, tries);
+          applyMaxSimlarity(currentMax, currentMaxRank);
         }
       } catch (err) {
         console.error(err);

@@ -172,6 +172,8 @@ def get_guess(round: int, word: str):
             return jsonify({"error": "calculating"}), 404
         tries += 1
     
+    broadcast("tries", tries)
+    
     correct = False
     if app.secrets[round].lower() == word.lower():
         word = app.secrets[round]
@@ -199,7 +201,6 @@ def get_guess(round: int, word: str):
 
         rtn["sim"] = similarity
         rtn["rank"] = rank
-        rtn["tries"] = tries
         rtn["max"] = current_max
         rtn["max_rank"] = current_max_rank
     else:
@@ -207,7 +208,6 @@ def get_guess(round: int, word: str):
             similarity = word2vec.similarity(app.secrets[round], word)
             rtn["sim"] = similarity
             rtn["rank"] = "1000위 이상"
-            rtn["tries"] = tries
 
             if similarity > current_max:
                 current_max = similarity
@@ -224,7 +224,7 @@ def get_guess(round: int, word: str):
 
 @app.route('/fetch-updated')
 def get_updated():
-    return jsonify({"round": current_round % NUM_SECRETS, "tries": tries, "max": current_max, "max_rank": current_max_rank})
+    return jsonify({"round": current_round % NUM_SECRETS, "max": current_max, "max_rank": current_max_rank})
 
 
 @app.route('/similarity/<int:round>')
@@ -280,6 +280,8 @@ async def echo(websocket, path):
             # 클라이언트로부터 메시지를 받았을 때의 처리 로직
             # print(f"Received message: {message}")
 
+            global tries
+
             # parse as json
             try:
                 data = json.loads(message)
@@ -300,6 +302,8 @@ async def echo(websocket, path):
             req_data = data["data"]
             if type == "ping":
                 res_data = req_data
+            elif type == "tries":
+                res_data = tries
             
             # create response with json
             response = {
