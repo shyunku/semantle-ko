@@ -261,7 +261,7 @@ def give_up(round: int):
 print("Server setup done.")
 
 # websocket
-async def handle(websocket, path):
+async def echo(websocket, path):
     async for message in websocket:
         # 클라이언트로부터 메시지를 받았을 때의 처리 로직
         print(f"Received message: {message}")
@@ -270,13 +270,12 @@ async def handle(websocket, path):
         response = f"Server received: {message}"
         await websocket.send(response)
 
-async def main():
-    async with websockets.serve(handle, "0.0.0.0", 3998):
-        print("Websocket server started")
-        await asyncio.Future()  # 무한 루프를 방지합니다.
+async def start_server():
+    server = await websockets.serve(echo, "localhost", 3998)
+    await server.wait_closed()
 
 def run_websocket_server():
-    asyncio.run(main())
+    asyncio.run(start_server())
 
 # 별도의 스레드에서 웹소켓 서버를 실행합니다.
 websocket_server_thread = threading.Thread(target=run_websocket_server, daemon=True)
