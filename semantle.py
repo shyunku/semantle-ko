@@ -251,6 +251,8 @@ def give_up(round: int):
         return app.secrets[round]
 
 
+print("Server setup done.")
+
 # websocket
 async def handle(websocket, path):
     async for message in websocket:
@@ -263,6 +265,7 @@ async def handle(websocket, path):
 
 async def main():
     async with websockets.serve(handle, "0.0.0.0", 3998):
+        print("Websocket server started")
         await asyncio.Future()  # 무한 루프를 방지합니다.
 
 asyncio.run(main())
