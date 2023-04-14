@@ -275,19 +275,19 @@ button {
 }
 
 .progress-bar.hundred {
-  background-color: "rgb(229, 172, 45)";
+  background-color: rgb(229, 172, 45);
 }
 
 .progress-bar.ten {
-  background-color: "rgb(255, 117, 36)";
+  background-color: rgb(255, 117, 36);
 }
 
 .progress-bar.five {
-  background-color: "rgb(255, 102, 102)";
+  background-color: rgb(255, 90, 90);
 }
 
 .progress-bar.one {
-  background-image: linear-gradient(90deg, rgb(16 255 0) 0%, rgb(255 205 22) 50%, rgb(255, 0, 0) 100%);
+  background-image: linear-gradient(90deg, rgb(16 255 0) 0%, rgb(255 205 22) 50%, rgb(255, 90, 90) 100%);
 }
 
 .weirdWord {
