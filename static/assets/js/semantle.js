@@ -49,6 +49,11 @@ function share() {
 const words_selected = [];
 const cache = {};
 let similarityStory = null;
+const expo = 5;
+
+function mlog(base, x) {
+  return Math.log(x) / Math.log(base);
+}
 
 function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
   let percentileText = percentile;
@@ -64,7 +69,8 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
     closeClass = "close";
     percentileText = `<span class="percentile">${percentile}</span>&nbsp;`;
     let bg = "";
-    let logged = percentile > 1000 ? 3 : Math.log10(percentile);
+    const maxLog = mlog(expo, 1000);
+    let logged = percentile > 1000 ? maxLog : mlog(expo, percentile);
     if (percentile == 1) {
       // rainbow gradient
       bg = "one";
@@ -76,7 +82,7 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
       bg = "hundred";
     }
     progress = ` <span class="progress-container">
-<span class="progress-bar ${bg}" style="width:${((3 - logged) * 100) / 3}%;">&nbsp;</span>
+<span class="progress-bar ${bg}" style="width:${((maxLog - logged) * 100) / maxLog}%;">&nbsp;</span>
 </span>`;
   }
   let style = "";
