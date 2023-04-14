@@ -72,6 +72,7 @@ def read_last():
 # read
 read_last()
 
+print("opening flask server")
 app = Flask(__name__)
 print("loading valid nearest")
 with open('data/valid_nearest.dat', 'rb') as f:
