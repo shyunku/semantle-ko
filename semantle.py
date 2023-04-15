@@ -312,9 +312,9 @@ async def get_guess(round: int, word: str):
 #     return jsonify({"top": nearest_dists[-2], "top10": nearest_dists[-11], "rest": nearest_dists[0]})
 
 
-# @app.route('/yesterday/<int:round>')
-# def get_solution_yesterday(round: int):
-#     return app.secrets[(round - 1) % NUM_SECRETS]
+@app.route('/yesterday/<int:round>')
+def get_solution_yesterday(round: int):
+    return app.secrets[(round - 1) % NUM_SECRETS]
 
 
 @app.route('/nearest1k/<int:round>')
