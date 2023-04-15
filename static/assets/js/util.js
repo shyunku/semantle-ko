@@ -11,7 +11,7 @@ const defaultOptions = {
   showMillisec: false,
 };
 
-export function fromRelativeTime(milli, rawOptions = defaultOptions) {
+function fromRelativeTime(milli, rawOptions = defaultOptions) {
   if (milli == null) return "-";
   let inversed = milli < 0;
   if (inversed) milli = -milli;
