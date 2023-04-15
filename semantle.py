@@ -20,9 +20,6 @@ import json
 
 KST = timezone('Asia/Seoul')
 
-def now():
-    return datetime.now(utc).timestamp()
-
 # websocket
 # websocket
 connected_clients = set()
@@ -191,6 +188,14 @@ async def next_stage(prev):
 def update_nearest():
     next_stage(current_round)
 
+@app.before_request
+def before_request(request):
+    print(f"[{datetime.now(utc).strftime('%Y.%m.%d %H:%M:%S')}] {request.remote_addr} {request.method} {request.path} {request.args}")
+
+@app.after_request
+def after_request(response):
+    print(f"[{datetime.now(utc).strftime('%Y.%m.%d %H:%M:%S')}] {response.status_code}")
+    return response
 
 @app.route('/')
 def get_index():
@@ -300,10 +305,6 @@ async def get_guess(round: int, word: str):
         await next_stage(round)
         
     return jsonify(rtn)
-
-@app.route('/fetch-updated')
-def get_updated():
-    return jsonify({"round": current_round % NUM_SECRETS, "max": current_max, "max_rank": current_max_rank})
 
 
 @app.route('/similarity/<int:round>')
