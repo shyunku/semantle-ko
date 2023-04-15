@@ -216,11 +216,15 @@ async def get_guess(round: int, word: str):
     global current_max
     global current_max_rank
     global calculating
+    global current_round
 
     with lock:
         if calculating:
             return jsonify({"error": "calculating"}), 404
         tries += 1
+
+    if round != current_round:
+        return jsonify({"error": "wrong round"}), 404
     
     await broadcast("tries", tries)
     
