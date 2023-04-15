@@ -106,7 +106,7 @@ body.settings-open #settings-underlay {
   box-sizing: border-box;
 }
 
-.other-hints .title {
+.right-sidebar .title {
   font-weight: bold;
   padding-bottom: 3px;
   margin-bottom: 10px;
