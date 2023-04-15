@@ -38,7 +38,7 @@ async def broadcast(type, data):
             continue
 
 
-VERSION = "1.1.35"
+VERSION = "1.1.36"
 NUM_SECRETS = 4650
 current_round = 41;
 calculating = False
