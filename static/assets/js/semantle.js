@@ -612,23 +612,23 @@ let Semantle = (function () {
 
   function applyWastedTime(wastedTime) {
     $("#wasted-time").innerHTML = `${fromRelativeTime(wastedTime * 1000)}`;
-  }
-
-  function applyTries(tries) {
-    $("#total-tries").innerHTML = `${tries} 회`;
     let color = "";
-    if (tries < 60 * 30) {
+    if (wastedTime < 60 * 30) {
       color = `color: #00b5ef`;
-    } else if (tries < 60 * 60) {
+    } else if (wastedTime < 60 * 60) {
       color = `color: rgb(92, 171, 85)`;
-    } else if (tries < 60 * 60 * 3) {
+    } else if (wastedTime < 60 * 60 * 3) {
       color = `color: rgb(217, 189, 69)`;
-    } else if (tries < 60 * 60 * 12) {
+    } else if (wastedTime < 60 * 60 * 12) {
       color = `color: rgb(221, 81, 81)`;
     } else {
       color = `color: rgb(255, 0, 0)`;
     }
-    $("#total-tries").style = color;
+    $("#wasted-time").style = color;
+  }
+
+  function applyTries(tries) {
+    $("#total-tries").innerHTML = `${tries} 회`;
   }
 
   function applyEnableNonDictionaryWordDisplay(enable) {
