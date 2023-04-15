@@ -9,6 +9,8 @@
 */
 "use strict";
 
+import { fromRelativeTime } from "./util";
+
 let gameOver = false;
 let guesses = [];
 let guessed = new Set();
@@ -611,7 +613,7 @@ let Semantle = (function () {
   }
 
   function applyWastedTime(wastedTime) {
-    $("#wasted-time").innerHTML = `${wastedTime} 초`;
+    $("#wasted-time").innerHTML = `${fromRelativeTime(wastedTime * 1000)}`;
   }
 
   function applyTries(tries) {
@@ -642,27 +644,13 @@ let Semantle = (function () {
     if (startTime == null) return;
     const diff = parseInt((Date.now() - startTime * 1000) / 1000);
     if (diff < 0) return;
-    let text = "";
-    if (diff < 60) {
-      text = `${diff}초`;
-    } else if (diff < 3600) {
-      text = `${Math.floor(diff / 60)}분 ${diff % 60}초`;
-    } else if (diff < 86400) {
-      text = `${Math.floor(diff / 3600)}시간 ${Math.floor((diff % 3600) / 60)}분 ${diff % 60}초`;
-    } else {
-      text = `${Math.floor(diff / 86400)}일 ${Math.floor((diff % 86400) / 3600)}시간 ${Math.floor(
-        (diff % 3600) / 60
-      )}분 ${diff % 60}초`;
-    }
-
     let color;
     if (diff < 60 * 10) color = `color: #00b5ef`;
     else if (diff < 60 * 30) color = `color: rgb(92, 171, 85)`;
     else if (diff < 60 * 60 * 3) color = `color: rgb(217, 189, 69)`;
     else if (diff < 60 * 60 * 24) color = `color: rgb(221, 81, 81)`;
     else color = `color: red`;
-
-    $("#current-proc-time").innerHTML = `<span style="${color}">${text}</span>`;
+    $("#current-proc-time").innerHTML = `<span style="${color}">${fromRelativeTime(diff * 1000)}</span>`;
   }
 
   function randomUUID() {
