@@ -333,6 +333,7 @@ async def count_wasted_time():
         await asyncio.sleep(1)
         wasted_time += len(connected_clients)
         await broadcast("wasted_time", wasted_time)
+        write_last()
 
 def start_counter():
     asyncio.run(count_wasted_time())
