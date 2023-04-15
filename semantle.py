@@ -263,6 +263,12 @@ async def get_guess(round: int, word: str):
         rtn["rank"] = rank
         rtn["max"] = current_max
         rtn["max_rank"] = current_max_rank
+
+        await broadcast("otherHint", {
+            "word": word,
+            "similarity": similarity,
+            "rank": rank
+        })
     else:
         try:
             similarity = word2vec.similarity(app.secrets[round], word)
@@ -274,6 +280,12 @@ async def get_guess(round: int, word: str):
 
             rtn["max"] = current_max
             rtn["max_rank"] = current_max_rank
+
+            await broadcast("otherHint", {
+                "word": word,
+                "similarity": similarity,
+                "rank": -1
+            })
         except KeyError:
             return jsonify({"error": "unknown"}), 404
     

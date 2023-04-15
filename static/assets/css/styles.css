@@ -81,10 +81,36 @@ body.settings-open #settings-underlay {
   display: flex;
   flex-direction: column;
   left: 100%;
+  top: 50px;
   margin-left: 30px;
-  width: 120px;
-  height: 400px;
-  border: 1px solid white;
+  width: 180px;
+  height: 450px;
+  border: 1px solid rgba(255, 255, 255, 0.227);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.right-sidebar .other-hints {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.other-hints .hint-item {
+  display: flex;
+  padding: 3px 5px;
+  font-size: 0.8em;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.other-hints .hint-item:not(:last-child) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.142);
+}
+
+.other-hints .hint-item .word {
+  min-width: 120px;
+  font-weight: bold;
 }
 
 header {

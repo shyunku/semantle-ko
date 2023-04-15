@@ -469,6 +469,12 @@ let Semantle = (function () {
     const found = guesses.reduce((acc, cur) => {
       return acc + (typeof cur[2] == "number" ? 1 : 0);
     }, 0);
+    for (let g of guesses) {
+      const percent = g[2];
+      if (percent != null && typeof percent == "number") {
+        myMaxSimRank = Math.min(myMaxSimRank, percent);
+      }
+    }
     $(
       "#found"
     ).innerHTML = `<span style="font-size: 0.8em;">상위 1000개 단어 중 <b>${found}개</b>를 찾았습니다.</span>`;
@@ -600,10 +606,7 @@ let Semantle = (function () {
   function applyMaxSimlarity(currentMax, currentMaxRank) {
     let color;
     if (currentMaxRank != -1) {
-      if (currentMaxRank <= 5) color = `color: rgb(221, 81, 81)`;
-      else if (currentMaxRank <= 10) color = `color: rgb(217, 189, 69)`;
-      else if (currentMaxRank <= 100) color = `color: rgb(92, 171, 85)`;
-      else color = `color: #00b5ef`;
+      color = `color: ${getSimRankColor(currentMaxRank)}`;
     }
     $("#max-similarity").innerHTML = `<span style="font-weight: bold; ${color}">${(currentMax * 100).toFixed(2)}% ${
       currentMax == 1 ? "" : `(${currentMaxRank == -1 ? "1000위 이상" : `${currentMaxRank}위`})`
@@ -612,19 +615,7 @@ let Semantle = (function () {
 
   function applyWastedTime(wastedTime) {
     $("#wasted-time").innerHTML = `${fromRelativeTime(wastedTime * 1000)}`;
-    let color = "";
-    if (wastedTime < 60 * 30) {
-      color = `color: #00b5ef`;
-    } else if (wastedTime < 60 * 60) {
-      color = `color: rgb(92, 171, 85)`;
-    } else if (wastedTime < 60 * 60 * 3) {
-      color = `color: rgb(217, 189, 69)`;
-    } else if (wastedTime < 60 * 60 * 12) {
-      color = `color: rgb(221, 81, 81)`;
-    } else {
-      color = `color: rgb(255, 0, 0)`;
-    }
-    $("#wasted-time").style = color;
+    $("#wasted-time").style.color = getWastedTimeColor(wastedTime);
   }
 
   function applyTries(tries) {
@@ -766,6 +757,38 @@ let Semantle = (function () {
     on("new_round", (r) => {
       if (puzzleNumber == r) {
         alert("누군가가 문제를 풀었습니다. 새로고침을 해주세요.");
+      }
+    });
+
+    on("otherHint", (data) => {
+      try {
+        const { word, similarity, rank } = data;
+        const otherHintsDiv = document.getElementById("other-hints");
+        // get list item counts in other hints
+        const itemDivs = document.querySelectorAll("#other-hints > div");
+        const itemDivsCount = itemDivs.length;
+
+        if (itemDivsCount >= 12) {
+          // remove first item
+          otherHintsDiv.removeChild(itemDivs[0]);
+        }
+
+        const blind = rank != -1 && myMaxSimRank > rank;
+
+        let color;
+        if (currentMaxRank != -1) {
+          color = `color: ${getSimRankColor(rank)}`;
+        }
+
+        otherHintsDiv.innerHTML += `
+          <div class="hint-item">
+            <div class="word">${blind ? "???" : word}</div>
+            <div class="similarity" style="${color}">${similarity.toFixed(2)}%</div>
+            <div class="rank" style="${color}">${rank == -1 ? "1000위 이상" : `${rank} 위`}</div>
+          </div>
+        `;
+      } catch (err) {
+        console.error(err);
       }
     });
   }

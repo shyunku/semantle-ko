@@ -74,3 +74,25 @@ function randomUUID() {
     return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
   });
 }
+
+function getWastedTimeColor(wastedTime) {
+  if (wastedTime < 60 * 30) {
+    return `#00b5ef`;
+  } else if (wastedTime < 60 * 60) {
+    return `rgb(92, 171, 85)`;
+  } else if (wastedTime < 60 * 60 * 3) {
+    return `rgb(217, 189, 69)`;
+  } else if (wastedTime < 60 * 60 * 12) {
+    return `rgb(221, 81, 81)`;
+  } else {
+    return `rgb(255, 0, 0)`;
+  }
+}
+
+function getSimRankColor(rank) {
+  if (rank == -1) return null;
+  if (rank <= 5) return `rgb(221, 81, 81)`;
+  else if (rank <= 10) return `rgb(217, 189, 69)`;
+  else if (rank <= 100) return `rgb(92, 171, 85)`;
+  else return `#00b5ef`;
+}
