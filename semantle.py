@@ -353,6 +353,9 @@ async def echo(websocket, path):
             # print(f"Received message: {message}")
 
             global tries
+            global current_max
+            global current_max_rank
+            global wasted_time
 
             # parse as json
             try:
@@ -385,6 +388,8 @@ async def echo(websocket, path):
                     "max": current_max,
                     "max_rank": current_max_rank
                 }
+            elif type == "wasted_time":
+                res_data = wasted_time
             
             # create response with json
             response = {

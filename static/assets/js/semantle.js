@@ -708,6 +708,11 @@ let Semantle = (function () {
         let maxSimRank = await sendSync("maxSimRank");
         applyMaxSimlarity(maxSimRank.max, maxSimRank.max_rank);
       })();
+
+      (async () => {
+        let wastedTime = await sendSync("wasted_time");
+        applyWastedTime(wastedTime);
+      })();
     };
 
     socket.onmessage = function (event) {
