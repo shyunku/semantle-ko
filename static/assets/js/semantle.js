@@ -9,8 +9,6 @@
 */
 "use strict";
 
-import { fromRelativeTime } from "./util";
-
 let gameOver = false;
 let guesses = [];
 let guessed = new Set();
