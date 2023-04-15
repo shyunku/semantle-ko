@@ -610,6 +610,10 @@ let Semantle = (function () {
     }</span>`;
   }
 
+  function applyWastedTime(wastedTime) {
+    $("#wasted-time").innerHTML = `${wastedTime} 초`;
+  }
+
   function applyTries(tries) {
     $("#total-tries").innerHTML = `${tries}`;
   }
@@ -744,6 +748,10 @@ let Semantle = (function () {
 
     on("maxSimRank", (data) => {
       applyMaxSimlarity(data.max, data.max_rank);
+    });
+
+    on("wasted_time", (data) => {
+      applyWastedTime(data);
     });
   }
 

@@ -37,11 +37,12 @@ async def broadcast(type, data):
 
 
 NUM_SECRETS = 4650
-current_round = 12;
+current_round = 41;
 calculating = False
 current_max = 0
 current_max_rank = -1
 tries = 0
+wasted_time = 0
 last_time = now()
 
 lock = threading.Lock()
@@ -49,7 +50,23 @@ lock = threading.Lock()
 def write_last():
     with open('last.dat', 'wb') as f:
         # write 3 fields current round, current_max, tries
-        pickle.dump((current_round, current_max, current_max_rank, tries, last_time), f)
+        # write as json data
+        global current_round
+        global current_max
+        global current_max_rank
+        global tries
+        global last_time
+        global wasted_time
+
+        data = {
+            "current_round": current_round,
+            "current_max": current_max,
+            "current_max_rank": current_max_rank,
+            "tries": tries,
+            "last_time": last_time,
+            "wasted_time": wasted_time
+        }
+        pickle.dump(data, f)
 
 
 def read_last():
@@ -58,9 +75,42 @@ def read_last():
     global current_max_rank
     global tries
     global last_time
+    global wasted_time
+
     try:
         with open('last.dat', 'rb') as f:
-            current_round, current_max, current_max_rank, tries, last_time = pickle.load(f)
+            # read with json
+            try:
+                loaded = json.load(f)
+            except json.decoder.JSONDecodeError:
+                print("last.dat is not json")
+                return
+        
+            try:
+                current_round = loaded["current_round"]
+            except KeyError:
+                print("last.dat does not have current_round")
+            try:
+                current_max = loaded["current_max"]
+            except KeyError:
+                print("last.dat does not have current_max")
+            try:
+                current_max_rank = loaded["current_max_rank"]
+            except KeyError:
+                print("last.dat does not have current_max_rank")
+            try:
+                tries = loaded["tries"]
+            except KeyError:
+                print("last.dat does not have tries")
+            try:
+                last_time = loaded["last_time"]
+            except KeyError:
+                print("last.dat does not have last_time")
+            try:
+                wasted_time = loaded["wasted_time"]
+            except KeyError:
+                print("last.dat does not have wasted_time")
+
     except FileNotFoundError:
         print("last.dat not found, starting from ~")
         # current_round = 0
@@ -102,6 +152,7 @@ async def next_stage(prev):
     global current_max
     global current_max_rank
     global last_time
+    global wasted_time
     
     with lock:
         if calculating:
@@ -112,6 +163,7 @@ async def next_stage(prev):
         current_max = 0
         current_max_rank = -1
         last_time = now()
+        wasted_time = 0
         write_last()
     
     await broadcast("new_round", current_round)
@@ -271,6 +323,16 @@ def give_up(round: int):
 
 
 print("Server setup done.")
+
+# count like setInterval
+async def count_wasted_time():
+    global wasted_time
+    global connected_clients
+
+    while True:
+        await asyncio.sleep(1)
+        wasted_time += len(connected_clients)
+        await broadcast("wasted_time", wasted_time)
 
 # websocket server
 async def echo(websocket, path):
