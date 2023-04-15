@@ -776,7 +776,7 @@ let Semantle = (function () {
         const blind = rank != -1 && myMaxSimRank > rank;
 
         let color;
-        if (currentMaxRank != -1) {
+        if (rank != -1) {
           color = `color: ${getSimRankColor(rank)}`;
         }
 
