@@ -757,6 +757,12 @@ let Semantle = (function () {
     on("wasted_time", (data) => {
       applyWastedTime(data);
     });
+
+    on("new_round", (r) => {
+      if (puzzleNumber == r) {
+        alert("누군가가 문제를 풀었습니다. 새로고침을 해주세요.");
+      }
+    });
   }
 
   window.addEventListener("DOMContentLoaded", () => {
