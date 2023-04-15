@@ -378,6 +378,12 @@ let Semantle = (function () {
         return b[0] - a[0];
       });
 
+      if (typeof percentile === "number") {
+        if (myMaxSimRank != -1 || percentile < myMaxSimRank) {
+          myMaxSimRank = percentile;
+        }
+      }
+
       try {
         if (!alreadyExists) {
           applyMaxSimlarity(currentMax, currentMaxRank);
@@ -768,7 +774,7 @@ let Semantle = (function () {
         const itemDivs = document.querySelectorAll("#other-hints > .hint-item");
         const itemDivsCount = itemDivs.length;
 
-        if (itemDivsCount >= 12) {
+        if (itemDivsCount >= 18) {
           // remove first item
           otherHintsDiv.removeChild(itemDivs[itemDivsCount - 1]);
         }
