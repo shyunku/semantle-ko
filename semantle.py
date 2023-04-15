@@ -30,10 +30,15 @@ connected_clients = set()
 async def broadcast(type, data):
     global connected_clients
     for client in connected_clients:
-        await client.send(json.dumps({
-            "type": type,
-            "data": data
-        }))
+        try:
+            await client.send(json.dumps({
+                "type": type,
+                "data": data
+            }))
+        except Exception as e:
+            # do nothing
+            continue
+
 
 VERSION = "1.1.35"
 NUM_SECRETS = 4650
