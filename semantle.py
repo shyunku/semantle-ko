@@ -425,6 +425,8 @@ async def echo(websocket, path):
 
             response_json = json.dumps(response)
             await websocket.send(response_json)
+    except Exception as e:
+        print(e)
     finally:
         connected_clients.remove(websocket)
         await broadcast("client_count", len(connected_clients))
