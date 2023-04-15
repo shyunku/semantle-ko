@@ -334,7 +334,10 @@ async def count_wasted_time():
         wasted_time += len(connected_clients)
         await broadcast("wasted_time", wasted_time)
 
-count_wasted_time_thread = threading.Thread(target=count_wasted_time, daemon=True)
+def start_counter():
+    asyncio.run(count_wasted_time())
+
+count_wasted_time_thread = threading.Thread(target=start_counter, daemon=True)
 count_wasted_time_thread.start()
 
 # websocket server
