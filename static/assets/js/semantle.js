@@ -643,10 +643,10 @@ let Semantle = (function () {
     const diff = parseInt((Date.now() - startTime * 1000) / 1000);
     if (diff < 0) return;
     let color;
-    if (diff < 60 * 10) color = `color: #00b5ef`;
-    else if (diff < 60 * 30) color = `color: rgb(92, 171, 85)`;
-    else if (diff < 60 * 60 * 3) color = `color: rgb(217, 189, 69)`;
-    else if (diff < 60 * 60 * 24) color = `color: rgb(221, 81, 81)`;
+    if (diff < 60 * 30) color = `color: #00b5ef`;
+    else if (diff < 60 * 60 * 3) color = `color: rgb(92, 171, 85)`;
+    else if (diff < 60 * 60 * 24) color = `color: rgb(217, 189, 69)`;
+    else if (diff < 60 * 60 * 24 * 3) color = `color: rgb(221, 81, 81)`;
     else color = `color: red`;
     $("#current-proc-time").innerHTML = `<span style="${color}">${fromRelativeTime(diff * 1000)}</span>`;
   }
