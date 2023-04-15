@@ -661,18 +661,7 @@ let Semantle = (function () {
     });
   }
 
-  window.addEventListener("DOMContentLoaded", () => {
-    // update with start time
-    const f1 = fastInterval(() => {
-      updateLastTime();
-    }, 1000);
-
-    applyEnableNonDictionaryWordDisplay(enableNonDictionaryWordDisplay);
-
-    $("#enable-non-dictionary-word-display").addEventListener("change", (e) => {
-      applyEnableNonDictionaryWordDisplay(e.target.checked);
-    });
-
+  function connect() {
     const handlers = {};
     const onHandlers = {};
     let pingThread = null;
@@ -738,6 +727,11 @@ let Semantle = (function () {
       console.log("[close] Connection closed");
       clearInterval(pingThread);
       $("#socket-status").innerHTML = "연결 끊어짐";
+
+      // retry
+      setTimeout(() => {
+        connect();
+      }, 5000);
     };
 
     on("client_count", (data) => {
@@ -751,6 +745,21 @@ let Semantle = (function () {
     on("maxSimRank", (data) => {
       applyMaxSimlarity(data.max, data.max_rank);
     });
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    // update with start time
+    const f1 = fastInterval(() => {
+      updateLastTime();
+    }, 1000);
+
+    applyEnableNonDictionaryWordDisplay(enableNonDictionaryWordDisplay);
+
+    $("#enable-non-dictionary-word-display").addEventListener("change", (e) => {
+      applyEnableNonDictionaryWordDisplay(e.target.checked);
+    });
+
+    connect();
   });
 
   return {
