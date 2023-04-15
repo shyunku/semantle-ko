@@ -615,7 +615,7 @@ let Semantle = (function () {
   }
 
   function applyTries(tries) {
-    $("#total-tries").innerHTML = `${tries}`;
+    $("#total-tries").innerHTML = `${tries} 회`;
     let color = "";
     if (tries < 60 * 30) {
       color = `color: #00b5ef`;
@@ -752,7 +752,7 @@ let Semantle = (function () {
     };
 
     on("client_count", (data) => {
-      $("#current-user-counts").innerHTML = data ?? 0;
+      $("#current-user-counts").innerHTML = `${data ?? 0} 명`;
     });
 
     on("tries", (data) => {
