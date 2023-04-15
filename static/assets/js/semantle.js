@@ -578,11 +578,11 @@ let Semantle = (function () {
     response += `<input type="button" value="기록 복사하기" id="result" onclick="share()" class="button"><br />`;
     const totalGames = stats["wins"] + stats["giveups"] + stats["abandons"];
     response += `<br/>
-        ${puzzleNumber + 1}번째 꼬맨틀은 오늘 밤 자정(한국 시간 기준)에 열립니다.<br/>
+        ${puzzleNumber + 1}회차 문제는 새로고침 후 확인하실 수 있습니다.<br/>
 <br/>
 <b>나의 플레이 기록</b>: <br/>
 <table>
-<tr><th>가장 처음 풀었던 꼬맨틀 번호:</th><td>${stats["firstPlay"]}</td></tr>
+<tr><th>가장 처음 풀었던 문제:</th><td>${stats["firstPlay"]}</td></tr>
 <tr><th>도전한 게임 횟수:</th><td>${totalGames}</td></tr>
 <tr><th>정답 횟수:</th><td>${stats["wins"]}</td></tr>
 <tr><th>연속 정답 횟수:</th><td>${stats["winStreak"]}</td></tr>
