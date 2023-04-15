@@ -694,7 +694,7 @@ let Semantle = (function () {
         let data = await sendSync("ping", Date.now());
         const diff = Date.now() - data;
         $("#ping-status").innerHTML = `${diff}`;
-      }, 1000);
+      }, 2000);
 
       (async () => {
         let currentTries = await sendSync("tries");
