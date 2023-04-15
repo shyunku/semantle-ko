@@ -94,7 +94,7 @@ def async_action(f):
         return asyncio.run(f(*args, **kwargs))
     return wrapped
 
-def next_stage(prev):
+async def next_stage(prev):
     print(f"scheduled stuff triggered: problem {prev + 1}")
     global current_round
     global calculating
@@ -114,7 +114,7 @@ def next_stage(prev):
         last_time = now()
         write_last()
     
-    asyncio.run(broadcast("new_round", current_round))
+    await broadcast("new_round", current_round)
     
     next_puzzle = current_round % NUM_SECRETS
     next_word = secrets[next_puzzle]

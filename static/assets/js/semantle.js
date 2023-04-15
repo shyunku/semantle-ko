@@ -342,7 +342,7 @@ let Semantle = (function () {
         return false;
       }
       if (guessData.error == "calculating") {
-        $("#error").textContent = `다음 문제를 준비하는 중입니다. 잠시 후 다시 시도해보세요.`;
+        $("#error").textContent = `다음 문제를 준비하는 중입니다. 잠시 후 다시 새로고침해보세요.`;
         return false;
       }
 
