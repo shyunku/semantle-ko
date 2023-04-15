@@ -767,6 +767,7 @@ let Semantle = (function () {
     });
 
     on("otherHint", (data) => {
+      return;
       try {
         const { word, similarity, rank } = data;
         const otherHintsDiv = document.getElementById("other-hints");
