@@ -140,7 +140,7 @@ for offset in range(-2, 2):
     secret_word = secrets[puzzle_number]
     app.secrets[puzzle_number] = secret_word
     app.nearests[puzzle_number] = get_nearest(puzzle_number, secret_word, valid_nearest_words, valid_nearest_vecs)
-    print(f"initialized {puzzle_number} with {secret_word}")
+    print(f"initialized {puzzle_number} round")
 
 # Flask 앱 생성 후에 추가
 
