@@ -62,6 +62,7 @@ body .banner span b {
 }
 
 body .container {
+  position: relative;
   margin: 0 auto;
   max-width: 640px;
   padding: 0 1em 1em;
@@ -73,6 +74,15 @@ body.dialog-open {
 
 body.settings-open #settings-underlay {
   display: block;
+}
+
+.container .right-sidebar {
+  position: absolute;
+  left: 100%;
+  margin-left: 30px;
+  width: 120px;
+  height: 400px;
+  border: 1px solid white;
 }
 
 header {
