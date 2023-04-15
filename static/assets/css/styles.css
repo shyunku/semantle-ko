@@ -83,9 +83,9 @@ body.settings-open #settings-underlay {
   left: 100%;
   top: 50px;
   margin-left: 30px;
-  width: 180px;
+  width: 200px;
   height: 450px;
-  border: 1px solid rgba(255, 255, 255, 0.227);
+  border: 1px solid rgba(111, 111, 111, 0.139);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -94,22 +94,34 @@ body.settings-open #settings-underlay {
   display: flex;
   height: 100%;
   flex-direction: column;
+  padding: 5px 5px;
+  box-sizing: border-box;
 }
 
 #other-hints .hint-item {
   display: flex;
-  padding: 3px 5px;
+  padding: 2px 5px;
   font-size: 0.75em;
   align-items: center;
-  justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .other-hints .hint-item:not(:last-child) {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.142);
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.142); */
 }
 
-.other-hints .hint-item .word {
-  min-width: 120px;
+#other-hints .hint-item .word {
+  flex: 1;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+#other-hints .hint-item .word {
+  min-width: 50px;
+  text-align: center;
   font-weight: bold;
 }
 
