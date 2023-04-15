@@ -35,7 +35,7 @@ async def broadcast(type, data):
             "data": data
         }))
 
-
+VERSION = "1.1.32"
 NUM_SECRETS = 4650
 current_round = 41;
 calculating = False
@@ -189,7 +189,7 @@ def update_nearest():
 @app.route('/')
 def get_index():
     global current_round
-    rendered = render_template('index.html', round=current_round % NUM_SECRETS, last_time=last_time)
+    rendered = render_template('index.html', round=current_round % NUM_SECRETS, last_time=last_time, version=VERSION)
     return rendered
 
 
@@ -333,6 +333,9 @@ async def count_wasted_time():
         await asyncio.sleep(1)
         wasted_time += len(connected_clients)
         await broadcast("wasted_time", wasted_time)
+
+count_wasted_time_thread = threading.Thread(target=count_wasted_time, daemon=True)
+count_wasted_time_thread.start()
 
 # websocket server
 async def echo(websocket, path):
