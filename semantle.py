@@ -66,7 +66,7 @@ def write_last():
             "last_time": last_time,
             "wasted_time": wasted_time
         }
-        pickle.dump(data, f)
+        json.dump(data, f)
 
 
 def read_last():
