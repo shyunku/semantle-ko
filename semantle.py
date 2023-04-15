@@ -48,7 +48,7 @@ last_time = now()
 lock = threading.Lock()
 
 def write_last():
-    with open('last.dat', 'wb') as f:
+    with open('last.dat', 'w') as f:
         # write 3 fields current round, current_max, tries
         # write as json data
         global current_round
@@ -78,7 +78,7 @@ def read_last():
     global wasted_time
 
     try:
-        with open('last.dat', 'rb') as f:
+        with open('last.dat', 'r') as f:
             # read with json
             try:
                 loaded = json.load(f)
