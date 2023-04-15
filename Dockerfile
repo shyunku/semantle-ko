@@ -18,4 +18,4 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 COPY ./requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT [ "gunicorn", "semantle:app", "--bind", "0.0.0.0:3999", "--timeout", "20"]
+ENTRYPOINT [ "gunicorn", "semantle:app", "--bind", "0.0.0.0:3999", "--timeout", "20", "--preload"]
