@@ -651,17 +651,21 @@ let Semantle = (function () {
     $("#current-proc-time").innerHTML = `<span style="${color}">${fromRelativeTime(diff * 1000)}</span>`;
   }
 
-  function randomUUID() {
-    // Public Domain/MIT
-    var d = new Date().getTime();
-    if (typeof performance !== "undefined" && typeof performance.now === "function") {
-      d += performance.now(); //use high-precision timer if available
+  function applySocketStatus(status) {
+    switch (status) {
+      case 0:
+        $("#socket-status").innerHTML = "연결 끊김";
+        document.body.style.backgroundColor = `linear-gradient(180deg, transparent 95% , #ff000030)`;
+        break;
+      case 1:
+        $("#socket-status").innerHTML = "연결 중...";
+        document.body.style.backgroundColor = `linear-gradient(180deg, transparent 95% , #ffff0030)`;
+        break;
+      case 2:
+        $("#socket-status").innerHTML = "연결됨";
+        document.body.style.backgroundColor = `linear-gradient(180deg, transparent 95% , #00ff0030)`;
+        break;
     }
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-      var r = (d + Math.random() * 16) % 16 | 0;
-      d = Math.floor(d / 16);
-      return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
-    });
   }
 
   function connect() {
@@ -669,7 +673,7 @@ let Semantle = (function () {
     const onHandlers = {};
     let pingThread = null;
 
-    $("#socket-status").innerHTML = "연결중...";
+    applySocketStatus(1);
     const socket = new WebSocket("ws://43.200.219.71:3998");
 
     let sendSync = (type, data) => {
@@ -691,7 +695,7 @@ let Semantle = (function () {
 
     socket.onopen = function (e) {
       console.log("[open] Connection established");
-      $("#socket-status").innerHTML = "연결됨";
+      applySocketStatus(2);
 
       pingThread = fastInterval(async () => {
         let data = await sendSync("ping", Date.now());
@@ -734,7 +738,7 @@ let Semantle = (function () {
     socket.onclose = function (event) {
       console.log("[close] Connection closed");
       clearInterval(pingThread);
-      $("#socket-status").innerHTML = "연결 끊어짐";
+      applySocketStatus(0);
 
       // retry
       setTimeout(() => {
