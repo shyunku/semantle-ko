@@ -106,6 +106,13 @@ body.settings-open #settings-underlay {
   box-sizing: border-box;
 }
 
+.other-hints .title {
+  font-weight: bold;
+  padding-bottom: 3px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(129, 129, 129, 0.194);
+}
+
 .other-hints .hint-item:not(:last-child) {
   /* border-bottom: 1px solid rgba(0, 0, 0, 0.142); */
 }

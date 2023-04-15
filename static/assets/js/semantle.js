@@ -765,12 +765,12 @@ let Semantle = (function () {
         const { word, similarity, rank } = data;
         const otherHintsDiv = document.getElementById("other-hints");
         // get list item counts in other hints
-        const itemDivs = document.querySelectorAll("#other-hints > div");
+        const itemDivs = document.querySelectorAll("#other-hints > .hint-item");
         const itemDivsCount = itemDivs.length;
 
         if (itemDivsCount >= 12) {
           // remove first item
-          otherHintsDiv.removeChild(itemDivs[0]);
+          otherHintsDiv.removeChild(itemDivs[itemDivsCount - 1]);
         }
 
         const blind = rank != -1 && myMaxSimRank > rank;
@@ -780,13 +780,14 @@ let Semantle = (function () {
           color = `color: ${getSimRankColor(rank)}`;
         }
 
-        otherHintsDiv.innerHTML += `
+        otherHintsDiv.innerHTML =
+          `
           <div class="hint-item">
             <div class="word">${blind ? "???" : word}</div>
             <div class="similarity" style="${color}">${similarity.toFixed(2)}%</div>
             <div class="rank" style="${color}">${rank == -1 ? "1000위 이상" : `${rank} 위`}</div>
           </div>
-        `;
+        ` + otherHintsDiv.innerHTML;
       } catch (err) {
         console.error(err);
       }
