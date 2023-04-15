@@ -221,7 +221,7 @@ async def get_guess(round: int, word: str):
     })
     
     if correct:
-        next_stage(round)
+        await next_stage(round)
         
     return jsonify(rtn)
 
