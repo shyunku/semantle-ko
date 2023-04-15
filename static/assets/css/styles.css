@@ -119,7 +119,7 @@ body.settings-open #settings-underlay {
   font-weight: bold;
 }
 
-#other-hints .hint-item .word {
+#other-hints .hint-item .similarity {
   min-width: 50px;
   text-align: center;
   font-weight: bold;
