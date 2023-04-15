@@ -90,16 +90,16 @@ body.settings-open #settings-underlay {
   overflow: hidden;
 }
 
-.right-sidebar .other-hints {
+.right-sidebar #other-hints {
   display: flex;
   height: 100%;
   flex-direction: column;
 }
 
-.other-hints .hint-item {
+#other-hints .hint-item {
   display: flex;
   padding: 3px 5px;
-  font-size: 0.8em;
+  font-size: 0.75em;
   align-items: center;
   justify-content: space-between;
 }
