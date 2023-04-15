@@ -191,11 +191,11 @@ def update_nearest():
 
 @app.before_request
 def before_request():
-    print(f"[{datetime.now(utc).strftime('%Y.%m.%d %H:%M:%S')}] {request.remote_addr} {request.method} {request.path} {request.args}")
+    print(f"[{datetime.now(utc).strftime('%Y.%m.%d %H:%M:%S')}] {request.remote_addr} {request.method} {request.path}")
 
 @app.after_request
 def after_request(response):
-    print(f"[{datetime.now(utc).strftime('%Y.%m.%d %H:%M:%S')}] {response.status_code}")
+    print(f"[{datetime.now(utc).strftime('%Y.%m.%d %H:%M:%S')}] status {response.status_code}")
     return response
 
 @app.route('/')
