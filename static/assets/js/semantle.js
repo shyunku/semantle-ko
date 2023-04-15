@@ -786,11 +786,13 @@ let Semantle = (function () {
           color = `color: ${getSimRankColor(rank)}`;
         }
 
+        console.log(myMaxSimRank, rank);
+
         otherHintsDiv.innerHTML =
           `
           <div class="hint-item">
             <div class="word">${blind ? "???" : word}</div>
-            <div class="similarity" style="${color}">${similarity.toFixed(2)}%</div>
+            <div class="similarity" style="${color}">${(similarity * 100).toFixed(2)}%</div>
             <div class="rank" style="${color}">${rank == -1 ? "1000위 이상" : `${rank} 위`}</div>
           </div>
         ` + otherHintsDiv.innerHTML;
