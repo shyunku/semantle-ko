@@ -200,10 +200,8 @@ def after_request(response):
 
 @app.route('/')
 def get_index():
-    print("index requested")
     global current_round
     rendered = render_template('index.html', round=current_round % NUM_SECRETS, last_time=last_time, version=VERSION)
-    print("index returned")
     return rendered
 
 
