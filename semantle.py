@@ -7,7 +7,8 @@ from flask import (
     send_file,
     send_from_directory,
     jsonify,
-    render_template
+    render_template,
+    request,
 )
 from pytz import utc, timezone
 import threading
@@ -189,7 +190,7 @@ def update_nearest():
     next_stage(current_round)
 
 @app.before_request
-def before_request(request):
+def before_request():
     print(f"[{datetime.now(utc).strftime('%Y.%m.%d %H:%M:%S')}] {request.remote_addr} {request.method} {request.path} {request.args}")
 
 @app.after_request
