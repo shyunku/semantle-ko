@@ -655,17 +655,18 @@ let Semantle = (function () {
     switch (status) {
       case 0:
         $("#socket-status").innerHTML = "연결 끊김";
-        $("#body").style.background = `linear-gradient(180deg, transparent 95% , #ff000030)`;
+        document.body.style.background = `linear-gradient(180deg, transparent 95% , #ff000030)`;
         break;
       case 1:
         $("#socket-status").innerHTML = "연결 중...";
-        $("#body").style.background = `linear-gradient(180deg, transparent 95% , #ffff0030)`;
+        document.body.style.background = `linear-gradient(180deg, transparent 95% , #ffff0030)`;
         break;
       case 2:
         $("#socket-status").innerHTML = "연결됨";
-        $("#body").style.background = `linear-gradient(180deg, transparent 95% , #00ff0030)`;
+        document.body.style.background = `linear-gradient(180deg, transparent 95% , #00ff0030)`;
         break;
     }
+    console.log("Socket status changed to", status);
   }
 
   function connect() {
