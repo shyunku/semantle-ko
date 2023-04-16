@@ -24,22 +24,20 @@ KST = timezone('Asia/Seoul')
 # websocket
 # websocket
 connected_clients = set()
-connected_clients_lock = threading.Lock()
 
 async def broadcast(type, data):
     global connected_clients
-    with connected_clients_lock:
-        # print("broadcasting", type, data, len(connected_clients))
-        for client in connected_clients:
-            try:
-                await client.send(json.dumps({
-                    "type": type,
-                    "data": data
-                }))
-            except Exception as e:
-                # do nothing
-                print("broadcast error", e)
-                continue
+    # print("broadcasting", type, data, len(connected_clients))
+    for client in connected_clients:
+        try:
+            await client.send(json.dumps({
+                "type": type,
+                "data": data
+            }))
+        except Exception as e:
+            # do nothing
+            print("broadcast error", e)
+            continue
 
 
 VERSION = "1.1.37"
@@ -370,9 +368,8 @@ count_wasted_time_thread.start()
 # websocket server
 async def echo(websocket, path):
     global connected_clients
-    with connected_clients_lock:
-        connected_clients.add(websocket)
-        await broadcast("client_count", len(connected_clients))
+    connected_clients.add(websocket)
+    await broadcast("client_count", len(connected_clients))
 
     try:
         async for message in websocket:
@@ -430,9 +427,8 @@ async def echo(websocket, path):
     except Exception as e:
         print(e)
     finally:
-        with connected_clients_lock:
-            connected_clients.remove(websocket)
-            await broadcast("client_count", len(connected_clients))
+        connected_clients.remove(websocket)
+        await broadcast("client_count", len(connected_clients))
 
 async def start_server():
     server = await websockets.serve(echo, "0.0.0.0", 3998)
