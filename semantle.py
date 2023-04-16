@@ -449,4 +449,5 @@ def run_websocket_server():
     asyncio.run(start_server())
 
 # 별도의 스레드에서 웹소켓 서버를 실행합니다.
-run_websocket_server()
+websocket_server_thread = threading.Thread(target=run_websocket_server, daemon=True)
+websocket_server_thread.start()
