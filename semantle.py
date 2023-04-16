@@ -245,6 +245,7 @@ async def get_guess(round: int, word: str):
     
     global test
     test += 1
+    print("-- test", test)
     await broadcast("tries", tries)
 
     if round != current_round:
