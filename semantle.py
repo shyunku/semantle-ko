@@ -27,10 +27,8 @@ connected_clients = set()
 
 async def broadcast(type, data):
     global connected_clients
-    global tries
     print("broadcasting", type, data, len(connected_clients))
 
-    print("tries", tries)
     for client in connected_clients:
         try:
             await client.send(json.dumps({
@@ -45,7 +43,7 @@ async def broadcast(type, data):
 
 VERSION = "1.1.37"
 NUM_SECRETS = 4650
-current_round = 41;
+current_round = 50;
 calculating = False
 current_max = 0
 current_max_rank = -1
