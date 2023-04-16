@@ -35,6 +35,7 @@ async def broadcast(type, data):
             }))
         except Exception as e:
             # do nothing
+            print("broadcast error", e)
             continue
 
 
