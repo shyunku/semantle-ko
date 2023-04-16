@@ -27,9 +27,9 @@ connected_clients = set()
 
 async def broadcast(type, data):
     global connected_clients
+    print("broadcasting", type, data, len(connected_clients))
     for client in connected_clients:
         try:
-            print("broadcasting", type, data)
             await client.send(json.dumps({
                 "type": type,
                 "data": data
@@ -74,7 +74,6 @@ def write_last():
             "wasted_time": wasted_time
         }
         json.dump(data, f)
-        print("wrote last.dat", data)
 
 
 def read_last():
@@ -254,10 +253,9 @@ async def get_guess(round: int, word: str):
         current_max = 0
     rtn = {"guess": word}
 
-    print("tries", tries, "max", current_max, "max_rank", current_max_rank)
     write_last()
 
-    # print("guess", word, "correct", correct, "round", round, "tries", tries, "max", current_max, "max_rank", current_max_rank)
+    print("guess", word, "correct", correct, "round", round, "tries", tries, "max", current_max, "max_rank", current_max_rank)
 
     # check most similar
     if round in app.nearests and word in app.nearests[round]:
