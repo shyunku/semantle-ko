@@ -164,17 +164,16 @@ async def next_stage(prev):
     global current_max_rank
     global last_time
     global wasted_time
-    
-    with lock:
-        if calculating:
-            return
-        calculating = True
-        current_round = prev + 1
-        tries = 0
-        current_max = 0
-        current_max_rank = -1
-        last_time = now()
-        wasted_time = 0
+
+    if calculating:
+        return
+    calculating = True
+    current_round = prev + 1
+    tries = 0
+    current_max = 0
+    current_max_rank = -1
+    last_time = now()
+    wasted_time = 0
         
     write_last()
     await broadcast("new_round", current_round)
@@ -189,8 +188,7 @@ async def next_stage(prev):
     app.secrets[next_puzzle] = next_word
     app.nearests[next_puzzle] = get_nearest(next_puzzle, next_word, valid_nearest_words, valid_nearest_vecs)
 
-    with lock:
-        calculating = False
+    calculating = False
 
 
 def update_nearest():
@@ -198,10 +196,12 @@ def update_nearest():
 
 @app.before_request
 def before_request():
+    lock.acquire()
     print(f"[{datetime.now(utc).strftime('%Y.%m.%d %H:%M:%S')}] {request.remote_addr} {request.method} {request.path}")
 
 @app.after_request
 def after_request(response):
+    lock.release()
     # print(f"[{datetime.now(utc).strftime('%Y.%m.%d %H:%M:%S')}] status {response.status_code}")
     return response
 
@@ -237,11 +237,10 @@ async def get_guess(round: int, word: str):
     global calculating
     global current_round
 
-    with lock:
-        if calculating:
-            return jsonify({"error": "calculating"}), 404
-        tries += 1
-        print("Broadcasting tries", tries)
+    if calculating:
+        return jsonify({"error": "calculating"}), 404
+    tries += 1
+    print("Broadcasting tries", tries)
     
     global test
     test += 1
@@ -268,13 +267,13 @@ async def get_guess(round: int, word: str):
         similarity = app.nearests[round][word][1]
         rank = app.nearests[round][word][0]
 
-        with lock:
-            if similarity > current_max:
-                current_max = similarity
-                if current_max == 1:
-                    current_max_rank = 0
-                else:
-                    current_max_rank = rank
+        
+        if similarity > current_max:
+            current_max = similarity
+            if current_max == 1:
+                current_max_rank = 0
+            else:
+                current_max_rank = rank
 
         rtn["sim"] = similarity
         rtn["rank"] = rank
@@ -313,7 +312,7 @@ async def get_guess(round: int, word: str):
     
     if correct:
         await next_stage(round)
-        
+    
     return jsonify(rtn)
 
 
@@ -362,8 +361,9 @@ async def count_wasted_time():
 
     while True:
         await asyncio.sleep(1)
-        wasted_time += len(connected_clients)
-        await broadcast("wasted_time", wasted_time)
+        with lock:
+            wasted_time += len(connected_clients)
+            await broadcast("wasted_time", wasted_time)
         write_last()
 
 def start_counter():
@@ -409,6 +409,8 @@ async def echo(websocket, path):
                 req_data = data["data"]
             except KeyError:
                 req_data = None
+
+            lock.acquire()
             
             if type == "ping":
                 res_data = req_data
@@ -421,6 +423,8 @@ async def echo(websocket, path):
                 }
             elif type == "wasted_time":
                 res_data = wasted_time
+            
+            lock.release()
             
             # create response with json
             response = {
