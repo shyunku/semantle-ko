@@ -235,11 +235,13 @@ async def get_guess(round: int, word: str):
         if calculating:
             return jsonify({"error": "calculating"}), 404
         tries += 1
+        print("tries", tries)
+        await broadcast("tries", tries)
 
     if round != current_round:
         return jsonify({"error": "wrong round"}), 404
     
-    await broadcast("tries", tries)
+    
     
     correct = False
     if app.secrets[round].lower() == word.lower():
