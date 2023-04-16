@@ -24,9 +24,12 @@ KST = timezone('Asia/Seoul')
 # websocket
 # websocket
 connected_clients = set()
+test = 0
 
 async def broadcast(type, data):
     global connected_clients
+    global test
+    print("test", test, "len", len(connected_clients))
     # print("broadcasting", type, data, len(connected_clients))
     for client in connected_clients:
         try:
@@ -240,6 +243,8 @@ async def get_guess(round: int, word: str):
         tries += 1
         print("Broadcasting tries", tries)
     
+    global test
+    test += 1
     await broadcast("tries", tries)
 
     if round != current_round:
