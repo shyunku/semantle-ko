@@ -436,6 +436,7 @@ async def echo(websocket, path):
 
 async def start_server():
     server = await websockets.serve(echo, "0.0.0.0", 3998)
+    print("Websocket server started.")
     await server.wait_closed()
 
 def run_websocket_server():
