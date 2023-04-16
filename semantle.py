@@ -24,21 +24,22 @@ KST = timezone('Asia/Seoul')
 # websocket
 # websocket
 connected_clients = set()
+connected_clients_lock = threading.Lock()
 
 async def broadcast(type, data):
     global connected_clients
-    print("broadcasting", type, data, len(connected_clients))
-
-    for client in connected_clients:
-        try:
-            await client.send(json.dumps({
-                "type": type,
-                "data": data
-            }))
-        except Exception as e:
-            # do nothing
-            print("broadcast error", e)
-            continue
+    with connected_clients_lock:
+        # print("broadcasting", type, data, len(connected_clients))
+        for client in connected_clients:
+            try:
+                await client.send(json.dumps({
+                    "type": type,
+                    "data": data
+                }))
+            except Exception as e:
+                # do nothing
+                print("broadcast error", e)
+                continue
 
 
 VERSION = "1.1.37"
@@ -116,6 +117,8 @@ def read_last():
                 wasted_time = loaded["wasted_time"]
             except KeyError:
                 print("last.dat does not have wasted_time")
+
+            print(f"Read complete! current_round: {current_round}, current_max: {current_max}, current_max_rank: {current_max_rank}, tries: {tries}, last_time: {last_time}, wasted_time: {wasted_time}")
 
     except FileNotFoundError:
         print("last.dat not found, starting from ~")
@@ -237,12 +240,11 @@ async def get_guess(round: int, word: str):
         if calculating:
             return jsonify({"error": "calculating"}), 404
         tries += 1
+        print("Broadcasting tries", tries)
         await broadcast("tries", tries)
 
     if round != current_round:
         return jsonify({"error": "wrong round"}), 404
-    
-    
     
     correct = False
     if app.secrets[round].lower() == word.lower():
@@ -368,8 +370,9 @@ count_wasted_time_thread.start()
 # websocket server
 async def echo(websocket, path):
     global connected_clients
-    connected_clients.add(websocket)
-    await broadcast("client_count", len(connected_clients))
+    with connected_clients_lock:
+        connected_clients.add(websocket)
+        await broadcast("client_count", len(connected_clients))
 
     try:
         async for message in websocket:
@@ -427,8 +430,9 @@ async def echo(websocket, path):
     except Exception as e:
         print(e)
     finally:
-        connected_clients.remove(websocket)
-        await broadcast("client_count", len(connected_clients))
+        with connected_clients_lock:
+            connected_clients.remove(websocket)
+            await broadcast("client_count", len(connected_clients))
 
 async def start_server():
     server = await websockets.serve(echo, "0.0.0.0", 3998)
