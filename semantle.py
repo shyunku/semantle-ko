@@ -72,6 +72,7 @@ def write_last():
             "wasted_time": wasted_time
         }
         json.dump(data, f)
+        print("wrote last.dat")
 
 
 def read_last():
