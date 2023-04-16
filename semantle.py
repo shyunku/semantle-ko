@@ -27,7 +27,10 @@ connected_clients = set()
 
 async def broadcast(type, data):
     global connected_clients
+    global tries
     print("broadcasting", type, data, len(connected_clients))
+
+    print("tries", tries)
     for client in connected_clients:
         try:
             await client.send(json.dumps({
@@ -62,8 +65,6 @@ def write_last():
         global tries
         global last_time
         global wasted_time
-
-        print("tries", tries)
 
         data = {
             "current_round": current_round,
@@ -172,8 +173,8 @@ async def next_stage(prev):
         current_max_rank = -1
         last_time = now()
         wasted_time = 0
-        write_last()
-    
+        
+    write_last()
     await broadcast("new_round", current_round)
     
     next_puzzle = current_round % NUM_SECRETS
