@@ -239,7 +239,8 @@ async def get_guess(round: int, word: str):
             return jsonify({"error": "calculating"}), 404
         tries += 1
         print("Broadcasting tries", tries)
-        await broadcast("tries", tries)
+    
+    await broadcast("tries", tries)
 
     if round != current_round:
         return jsonify({"error": "wrong round"}), 404
