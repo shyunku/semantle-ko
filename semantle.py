@@ -29,6 +29,7 @@ async def broadcast(type, data):
     global connected_clients
     for client in connected_clients:
         try:
+            print("broadcasting", type, data)
             await client.send(json.dumps({
                 "type": type,
                 "data": data
@@ -39,7 +40,7 @@ async def broadcast(type, data):
             continue
 
 
-VERSION = "1.1.36"
+VERSION = "1.1.37"
 NUM_SECRETS = 4650
 current_round = 41;
 calculating = False
@@ -196,7 +197,7 @@ def before_request():
 
 @app.after_request
 def after_request(response):
-    print(f"[{datetime.now(utc).strftime('%Y.%m.%d %H:%M:%S')}] status {response.status_code}")
+    # print(f"[{datetime.now(utc).strftime('%Y.%m.%d %H:%M:%S')}] status {response.status_code}")
     return response
 
 @app.route('/')
@@ -235,7 +236,6 @@ async def get_guess(round: int, word: str):
         if calculating:
             return jsonify({"error": "calculating"}), 404
         tries += 1
-        print("tries", tries)
         await broadcast("tries", tries)
 
     if round != current_round:
