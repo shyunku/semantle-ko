@@ -26,23 +26,6 @@ KST = timezone('Asia/Seoul')
 connected_clients = set()
 test = 0
 
-async def broadcast(type, data):
-    global connected_clients
-    global test
-    print("test", test, "len", len(connected_clients))
-    # print("broadcasting", type, data, len(connected_clients))
-    for client in connected_clients:
-        try:
-            await client.send(json.dumps({
-                "type": type,
-                "data": data
-            }))
-        except Exception as e:
-            # do nothing
-            print("broadcast error", e)
-            continue
-
-
 VERSION = "1.1.37"
 NUM_SECRETS = 4650
 current_round = 50;
@@ -146,6 +129,22 @@ for offset in range(-2, 2):
     app.secrets[puzzle_number] = secret_word
     app.nearests[puzzle_number] = get_nearest(puzzle_number, secret_word, valid_nearest_words, valid_nearest_vecs)
     print(f"initialized {puzzle_number} round")
+
+async def broadcast(type, data):
+    global connected_clients
+    global test
+    print("test", test, "len", len(connected_clients))
+    # print("broadcasting", type, data, len(connected_clients))
+    for client in connected_clients:
+        try:
+            await client.send(json.dumps({
+                "type": type,
+                "data": data
+            }))
+        except Exception as e:
+            # do nothing
+            print("broadcast error", e)
+            continue
 
 # Flask 앱 생성 후에 추가
 
