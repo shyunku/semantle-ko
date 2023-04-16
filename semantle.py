@@ -132,8 +132,6 @@ for offset in range(-2, 2):
 
 async def broadcast(type, data):
     global connected_clients
-    global test
-    print("test", test, "len", len(connected_clients))
     # print("broadcasting", type, data, len(connected_clients))
     for client in connected_clients:
         try:
