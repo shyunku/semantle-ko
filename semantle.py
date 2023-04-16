@@ -63,6 +63,8 @@ def write_last():
         global last_time
         global wasted_time
 
+        print("tries", tries)
+
         data = {
             "current_round": current_round,
             "current_max": current_max,
@@ -252,6 +254,7 @@ async def get_guess(round: int, word: str):
         current_max = 0
     rtn = {"guess": word}
 
+    print("tries", tries, "max", current_max, "max_rank", current_max_rank)
     write_last()
 
     # print("guess", word, "correct", correct, "round", round, "tries", tries, "max", current_max, "max_rank", current_max_rank)
